@@ -1,0 +1,60 @@
+<section class="assessment-page">
+  <div class="container">
+    <div class="assessment-header">
+      <h1>Career Assessment</h1>
+      <p>Complete all 5 assessment categories to receive your personalized career report</p>
+    </div>
+
+    @if (loading) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading assessment categories...</p>
+      </div>
+    } @else {
+      <div class="assessment-overview">
+        <div class="overview-card">
+          <h3>5 Categories</h3>
+          <p>Assessment Dimensions</p>
+        </div>
+        <div class="overview-card">
+          <h3>75 Questions</h3>
+          <p>Total Questions</p>
+        </div>
+        <div class="overview-card">
+          <h3>~45 Min</h3>
+          <p>Estimated Time</p>
+        </div>
+      </div>
+
+      @if (!currentSession) {
+        <div class="start-section">
+          <h2>Ready to Begin?</h2>
+          <p>Click the button below to start your assessment or choose a specific category</p>
+          <button class="btn btn-primary btn-lg" (click)="startAssessment()" [disabled]="starting">
+            {{ starting ? 'Starting...' : 'Start Full Assessment' }}
+          </button>
+        </div>
+      }
+
+      <div class="categories-grid">
+        @for (cat of categories; track cat.id; let i = $index) {
+          <div class="category-card" [style.border-left-color]="getColor(cat.code)">
+            <div class="category-number">{{ i + 1 }}</div>
+            <div class="category-icon" [innerHTML]="getIcon(cat.code)" [style.color]="getColor(cat.code)"></div>
+            <div class="category-info">
+              <h3>{{ cat.name }}</h3>
+              <p>{{ cat.description }}</p>
+              <div class="category-meta">
+                <span>{{ cat.totalQuestions }} Questions</span>
+                <span>{{ cat.timeLimitMinutes }} Minutes</span>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-sm" (click)="startCategory(cat.id)" [disabled]="starting">
+              Start
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

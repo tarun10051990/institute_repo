@@ -1,0 +1,114 @@
+<section class="results-page">
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading your results...</p>
+    </div>
+  } @else if (result) {
+    <div class="container">
+      <!-- Header -->
+      <div class="results-header">
+        <div>
+          <h1>Assessment Results</h1>
+          <p>Session: {{ result.sessionCode }} | {{ result.userName }}</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" (click)="downloadPdf()">Download PDF Report</button>
+          <a routerLink="/dashboard" class="btn btn-outline">Back to Dashboard</a>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-card">
+        <h2>Overall Summary</h2>
+        <p>{{ result.overallSummary }}</p>
+      </div>
+
+      <!-- Score Cards -->
+      <div class="scores-grid">
+        @for (score of result.categoryScores; track score.categoryId; let i = $index) {
+          <div class="score-card" [style.border-top-color]="chartColors[i]">
+            <div class="score-header">
+              <h3>{{ score.categoryName }}</h3>
+              <span class="score-level" [ngClass]="getScoreLevelClass(score.percentage)">
+                {{ getScoreLevel(score.percentage) }}
+              </span>
+            </div>
+            <div class="score-value" [style.color]="chartColors[i]">
+              {{ score.percentage }}%
+            </div>
+            <div class="score-bar">
+              <div class="score-bar-fill" [style.width.%]="score.percentage" [style.background]="chartColors[i]"></div>
+            </div>
+            <p class="score-detail">{{ score.rawScore }} / {{ score.maxScore }}</p>
+            @if (score.traitSummary) {
+              <p class="trait-summary">{{ score.traitSummary }}</p>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-section">
+        <h2>Visual Analysis</h2>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <canvas baseChart
+              [data]="barChartData"
+              [options]="barChartOptions"
+              type="bar">
+            </canvas>
+          </div>
+          <div class="chart-card">
+            <canvas baseChart
+              [data]="pieChartData"
+              [options]="pieChartOptions"
+              type="pie">
+            </canvas>
+          </div>
+        </div>
+        <div class="chart-card radar-card">
+          <canvas baseChart
+            [data]="radarChartData"
+            [options]="radarChartOptions"
+            type="radar">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Career Recommendations -->
+      @if (result.careerRecommendations.length > 0) {
+        <div class="careers-section">
+          <h2>Top Career Recommendations</h2>
+          <div class="careers-grid">
+            @for (career of result.careerRecommendations; track career.id) {
+              <div class="career-card">
+                <div class="career-rank">#{{ career.rankOrder }}</div>
+                <div class="career-content">
+                  <div class="career-header">
+                    <h3>{{ career.careerTitle }}</h3>
+                    <span class="match-badge">{{ career.matchPercentage }}% Match</span>
+                  </div>
+                  <p class="career-desc">{{ career.careerDescription }}</p>
+                  <div class="career-details">
+                    <span><strong>Field:</strong> {{ career.careerField }}</span>
+                    <span><strong>Education:</strong> {{ career.requiredEducation }}</span>
+                    <span><strong>Salary:</strong> {{ career.salaryRange }}</span>
+                    <span><strong>Growth:</strong> {{ career.growthOutlook }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Download CTA -->
+      <div class="download-cta">
+        <h2>Get Your Complete Report</h2>
+        <p>Download the comprehensive PDF report with detailed charts, analysis, and career guidance</p>
+        <button class="btn btn-primary btn-lg" (click)="downloadPdf()">Download PDF Report</button>
+      </div>
+    </div>
+  }
+</section>

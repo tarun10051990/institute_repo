@@ -1,0 +1,152 @@
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container hero-content">
+    <div class="hero-text">
+      <span class="hero-badge">5-Dimensional Career Assessment</span>
+      <h1>Discover Your <span class="highlight">Perfect Career</span></h1>
+      <p>Make smart decisions with our advanced AI-enabled career guidance tools. Take the most comprehensive psychometric assessment to find your best-fit career.</p>
+      <div class="hero-actions">
+        <a routerLink="/register" class="btn btn-primary btn-lg">Take Free Assessment</a>
+        <a routerLink="/about" class="btn btn-outline btn-lg">Learn More</a>
+      </div>
+      <div class="hero-tags">
+        <span>Career Assessment</span>
+        <span>Personalised Guidance</span>
+        <span>PDF Reports</span>
+        <span>Career Recommendations</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="dimension-preview">
+          @for (dim of dimensions; track dim.name) {
+            <div class="dim-item">
+              <span class="dim-icon" [innerHTML]="dim.icon"></span>
+              <span>{{ dim.name }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      @for (stat of stats; track stat.label) {
+        <div class="stat-item">
+          <h3>{{ stat.number }}</h3>
+          <p>{{ stat.label }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- 5 Dimensions Section -->
+<section class="section dimensions-section">
+  <div class="container">
+    <h2 class="section-title">The 5-Dimensional Assessment</h2>
+    <p class="section-subtitle">Our scientifically designed assessment evaluates you across 5 key dimensions critical for career success</p>
+    <div class="dimensions-grid">
+      @for (dim of dimensions; track dim.name; let i = $index) {
+        <div class="dimension-card" [attr.data-index]="i">
+          <div class="dim-icon-large" [innerHTML]="dim.icon"></div>
+          <h3>{{ dim.name }}</h3>
+          <p>{{ dim.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="section how-it-works">
+  <div class="container">
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-subtitle">Three simple steps to discover your ideal career path</p>
+    <div class="steps-grid">
+      @for (step of steps; track step.number) {
+        <div class="step-card">
+          <div class="step-number">{{ step.number }}</div>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Assessment Features -->
+<section class="section features-section">
+  <div class="container">
+    <h2 class="section-title">What You Get</h2>
+    <p class="section-subtitle">Comprehensive career guidance powered by advanced psychometric assessment</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">&#128202;</div>
+        <h3>Detailed PDF Report</h3>
+        <p>Get a comprehensive report with charts, score breakdowns, and personalized analysis across all 5 dimensions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#127942;</div>
+        <h3>Top 5 Career Matches</h3>
+        <p>Receive your top 5 best-fit career recommendations with match percentages, salary ranges, and growth outlook.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128200;</div>
+        <h3>Visual Analytics</h3>
+        <p>Interactive charts including bar graphs and pie charts showing your performance across all assessment categories.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128218;</div>
+        <h3>Development Plan</h3>
+        <p>Personalized development plan with actionable steps to help you strengthen weak areas and build on your strengths.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#127891;</div>
+        <h3>75 Expert Questions</h3>
+        <p>Carefully curated questions across 5 categories designed by psychometricians and industry experts.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128161;</div>
+        <h3>Trait Analysis</h3>
+        <p>Understand your dominant traits in each category and how they influence your career compatibility.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section testimonials-section">
+  <div class="container">
+    <h2 class="section-title">What Students Say</h2>
+    <p class="section-subtitle">Hear from students who discovered their perfect career path</p>
+    <div class="testimonials-grid">
+      @for (testimonial of testimonials; track testimonial.name) {
+        <div class="testimonial-card">
+          <div class="quote-icon">&#8220;</div>
+          <p class="testimonial-text">{{ testimonial.text }}</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">{{ testimonial.name.charAt(0) }}</div>
+            <div>
+              <h4>{{ testimonial.name }}</h4>
+              <span>{{ testimonial.role }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Ready to Discover Your Perfect Career?</h2>
+    <p>Take the free 5-dimensional assessment and get your personalized career report</p>
+    <a routerLink="/register" class="btn btn-primary btn-lg">Get Started Free</a>
+  </div>
+</section>

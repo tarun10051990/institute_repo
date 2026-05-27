@@ -1,0 +1,111 @@
+.about-hero {
+  background: linear-gradient(135deg, #f5f7ff, #e8f4fd);
+  padding: 80px 0;
+  text-align: center;
+
+  h1 {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    .highlight { color: var(--primary); }
+  }
+
+  p {
+    font-size: 18px;
+    color: var(--dark-light);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.about-content {
+  h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: var(--primary);
+  }
+  p {
+    font-size: 16px;
+    color: var(--dark-light);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.stat-box {
+  background: var(--light);
+  border-radius: var(--radius);
+  padding: 30px;
+  text-align: center;
+
+  h3 {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  p {
+    font-size: 14px;
+    color: var(--dark-light);
+    margin-top: 6px;
+  }
+}
+
+.values-section { background: var(--light); }
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.value-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 30px;
+  transition: var(--transition);
+  border-left: 4px solid var(--primary);
+
+  &:nth-child(2) { border-left-color: var(--secondary); }
+  &:nth-child(3) { border-left-color: var(--accent); }
+  &:nth-child(4) { border-left-color: var(--purple); }
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+  }
+
+  h3 { font-size: 18px; margin-bottom: 10px; }
+  p { font-size: 14px; color: var(--dark-light); line-height: 1.7; }
+}
+
+.cta-section {
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  padding: 80px 0;
+  text-align: center;
+
+  h2 { font-size: 36px; font-weight: 800; color: var(--white); margin-bottom: 16px; }
+  p { font-size: 18px; color: rgba(255,255,255,.85); margin-bottom: 30px; }
+  .btn {
+    background: var(--white);
+    color: var(--primary);
+    &:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,.2); }
+  }
+}
+
+@media (max-width: 768px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .values-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,68 @@
+<section class="dashboard">
+  <div class="container">
+    <div class="dashboard-header">
+      <div>
+        <h1>Welcome, {{ user?.firstName || 'Student' }}!</h1>
+        <p>Manage your career assessments and view results</p>
+      </div>
+      <a routerLink="/assessment" class="btn btn-primary">Start New Assessment</a>
+    </div>
+
+    <div class="dashboard-stats">
+      <div class="stat-card">
+        <h3>{{ sessions.length }}</h3>
+        <p>Total Assessments</p>
+      </div>
+      <div class="stat-card">
+        <h3>{{ getCompletedCount() }}</h3>
+        <p>Completed</p>
+      </div>
+      <div class="stat-card">
+        <h3>{{ getInProgressCount() }}</h3>
+        <p>In Progress</p>
+      </div>
+    </div>
+
+    <div class="sessions-section">
+      <h2>Assessment History</h2>
+      @if (loading) {
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading your assessments...</p>
+        </div>
+      } @else if (sessions.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">&#128218;</div>
+          <h3>No Assessments Yet</h3>
+          <p>Take your first career assessment to discover your ideal career path</p>
+          <a routerLink="/assessment" class="btn btn-primary">Start Assessment</a>
+        </div>
+      } @else {
+        <div class="sessions-grid">
+          @for (session of sessions; track session.id) {
+            <div class="session-card">
+              <div class="session-header">
+                <span class="session-code">{{ session.sessionCode }}</span>
+                <span class="badge" [ngClass]="getStatusClass(session.status)">{{ session.status }}</span>
+              </div>
+              <div class="session-info">
+                <p>Progress: {{ session.answeredQuestions }} / {{ session.totalQuestions }} questions</p>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="session.totalQuestions > 0 ? (session.answeredQuestions / session.totalQuestions) * 100 : 0"></div>
+                </div>
+              </div>
+              <div class="session-actions">
+                @if (session.status === 'COMPLETED') {
+                  <button class="btn btn-primary btn-sm" (click)="viewResults(session.id)">View Results</button>
+                  <button class="btn btn-outline btn-sm" (click)="downloadReport(session.id)">Download PDF</button>
+                } @else if (session.status === 'IN_PROGRESS') {
+                  <a [routerLink]="['/assessment']" [queryParams]="{session: session.id}" class="btn btn-secondary btn-sm">Continue</a>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>
