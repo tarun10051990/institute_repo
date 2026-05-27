@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS answer_options (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     question_id BIGINT NOT NULL,
     option_text TEXT NOT NULL,
-    option_label CHAR(1) NOT NULL,
+    option_label VARCHAR(1) NOT NULL,
     score_value INT NOT NULL DEFAULT 0,
     trait_code VARCHAR(50),
     display_order INT NOT NULL DEFAULT 0,
