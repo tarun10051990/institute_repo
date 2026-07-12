@@ -86,6 +86,51 @@ export interface CareerRecommendation {
   rankOrder: number;
 }
 
+export interface MbtiOption {
+  label: string;
+  text: string;
+  letter: string;
+}
+
+export interface MbtiQuestion {
+  id: number;
+  dimension: string;
+  questionText: string;
+  options: MbtiOption[];
+}
+
+export interface MbtiAnswer {
+  questionId: number;
+  letter: string;
+}
+
+export interface MbtiDimensionScore {
+  dimension: string;
+  leftLetter: string;
+  leftName: string;
+  rightLetter: string;
+  rightName: string;
+  leftCount: number;
+  rightCount: number;
+  chosenLetter: string;
+  chosenName: string;
+  strengthPercentage: number;
+  description: string;
+}
+
+export interface MbtiResult {
+  type: string;
+  nickname: string;
+  summary: string;
+  overview: string;
+  dimensions: MbtiDimensionScore[];
+  strengths: string[];
+  weaknesses: string[];
+  careers: string[];
+  relationships: string;
+  growthTips: string;
+}
+
 export interface AssessmentResult {
   sessionId: number;
   sessionCode: string;

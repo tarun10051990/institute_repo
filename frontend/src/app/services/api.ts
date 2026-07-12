@@ -2,7 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth';
-import { Category, Question } from '../models/interfaces';
+import {
+  Category,
+  Question,
+  MbtiQuestion,
+  MbtiAnswer,
+  MbtiResult,
+} from '../models/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -39,5 +45,13 @@ export class ApiService {
 
   getQuestionById(id: number): Observable<Question> {
     return this.http.get<Question>(`${this.apiUrl}/questions/${id}`);
+  }
+
+  getMbtiQuestions(): Observable<MbtiQuestion[]> {
+    return this.http.get<MbtiQuestion[]>(`${this.apiUrl}/mbti/questions`);
+  }
+
+  submitMbti(answers: MbtiAnswer[]): Observable<MbtiResult> {
+    return this.http.post<MbtiResult>(`${this.apiUrl}/mbti/result`, { answers });
   }
 }

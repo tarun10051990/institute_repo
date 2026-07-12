@@ -13,6 +13,7 @@
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuOpen = false">Home</a>
       <a routerLink="/about" routerLinkActive="active" (click)="isMenuOpen = false">About</a>
       <a routerLink="/programs" routerLinkActive="active" (click)="isMenuOpen = false">Programs</a>
+      <a routerLink="/mbti" routerLinkActive="active" (click)="isMenuOpen = false">MBTI Test</a>
       <a routerLink="/contact" routerLinkActive="active" (click)="isMenuOpen = false">Contact</a>
 
       @if (authService.isLoggedIn()) {

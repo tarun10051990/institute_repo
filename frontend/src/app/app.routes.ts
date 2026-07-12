@@ -9,6 +9,7 @@ import { Assessment } from './components/assessment/assessment';
 import { TestTaking } from './components/test-taking/test-taking';
 import { Results } from './components/results/results';
 import { Contact } from './components/contact/contact';
+import { MbtiTest } from './components/mbti-test/mbti-test';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'contact', component: Contact },
+  { path: 'mbti', component: MbtiTest },
   { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
   { path: 'assessment', component: Assessment, canActivate: [authGuard] },
   {
