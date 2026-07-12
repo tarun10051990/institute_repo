@@ -119,14 +119,7 @@ export class TestTaking implements OnInit {
         },
       });
     } else {
-      this.completing = true;
-      this.assessmentService.completeSession(this.sessionId).subscribe({
-        next: () => {
-          this.completing = false;
-          this.router.navigate(['/results', this.sessionId]);
-        },
-        error: () => (this.completing = false),
-      });
+      this.router.navigate(['/mbti', this.sessionId]);
     }
   }
 

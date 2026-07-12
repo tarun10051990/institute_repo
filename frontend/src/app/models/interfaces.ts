@@ -4,6 +4,7 @@ export interface AuthResponse {
   firstName: string;
   lastName: string;
   userId: number;
+  role: string;
 }
 
 export interface RegisterRequest {
@@ -140,4 +141,60 @@ export interface AssessmentResult {
   categoryScores: CategoryScore[];
   careerRecommendations: CareerRecommendation[];
   overallSummary: string;
+  mbti?: MbtiResult;
+}
+
+export interface AdminUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  city?: string;
+  educationLevel?: string;
+  createdAt: string;
+  sessionCount: number;
+  completedCount: number;
+}
+
+export interface AdminSession {
+  sessionId: number;
+  sessionCode: string;
+  status: string;
+  userId: number;
+  userName: string;
+  email: string;
+  mbtiType?: string;
+  completedAt?: string;
+  createdAt?: string;
+}
+
+export interface MbtiOptionAdmin {
+  id?: number;
+  label: string;
+  text: string;
+  letter: string;
+  displayOrder?: number;
+}
+
+export interface MbtiQuestionAdmin {
+  id?: number;
+  dimension: string;
+  questionText: string;
+  displayOrder?: number;
+  active?: boolean;
+  options: MbtiOptionAdmin[];
+}
+
+export interface MbtiProfileAdmin {
+  id: number;
+  typeCode: string;
+  nickname: string;
+  summary: string;
+  overview: string;
+  strengths: string[];
+  weaknesses: string[];
+  careers: string[];
+  relationships: string;
+  growthTips: string;
 }

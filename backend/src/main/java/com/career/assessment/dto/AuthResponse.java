@@ -9,4 +9,5 @@ public class AuthResponse {
     private String firstName;
     private String lastName;
     private Long userId;
+    private String role;
 }

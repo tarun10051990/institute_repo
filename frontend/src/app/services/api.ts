@@ -51,7 +51,11 @@ export class ApiService {
     return this.http.get<MbtiQuestion[]>(`${this.apiUrl}/mbti/questions`);
   }
 
-  submitMbti(answers: MbtiAnswer[]): Observable<MbtiResult> {
-    return this.http.post<MbtiResult>(`${this.apiUrl}/mbti/result`, { answers });
+  submitMbti(answers: MbtiAnswer[], sessionId?: number): Observable<MbtiResult> {
+    return this.http.post<MbtiResult>(
+      `${this.apiUrl}/mbti/result`,
+      { answers, sessionId },
+      { headers: this.getHeaders() }
+    );
   }
 }

@@ -95,6 +95,12 @@
       <div class="intro-card">
         <span class="intro-eyebrow">Personality Assessment</span>
         <h1>MBTI Personality Test</h1>
+        @if (assessmentMode) {
+          <p class="assessment-note">
+            This is the final part of your career assessment. Your personality type will be
+            saved with your results and included in your downloadable PDF report.
+          </p>
+        }
         <p>
           Answer {{ questions.length }} quick either/or questions about how you think, feel, and
           act. We'll identify your four-letter personality type and generate a detailed report
@@ -154,7 +160,7 @@
 
         @if (allAnswered) {
           <button class="btn btn-primary" (click)="submit()" [disabled]="submitting">
-            {{ submitting ? 'Analyzing...' : 'See My Result' }}
+            {{ submitting ? 'Analyzing...' : (assessmentMode ? 'Finish & See Full Report' : 'See My Result') }}
           </button>
         } @else {
           <button class="btn btn-primary" (click)="nextQuestion()" [disabled]="currentIndex === questions.length - 1">

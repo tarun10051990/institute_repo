@@ -13,12 +13,15 @@
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuOpen = false">Home</a>
       <a routerLink="/about" routerLinkActive="active" (click)="isMenuOpen = false">About</a>
       <a routerLink="/programs" routerLinkActive="active" (click)="isMenuOpen = false">Programs</a>
-      <a routerLink="/mbti" routerLinkActive="active" (click)="isMenuOpen = false">MBTI Test</a>
       <a routerLink="/contact" routerLinkActive="active" (click)="isMenuOpen = false">Contact</a>
 
       @if (authService.isLoggedIn()) {
         <a routerLink="/dashboard" routerLinkActive="active" (click)="isMenuOpen = false">Dashboard</a>
         <a routerLink="/assessment" routerLinkActive="active" (click)="isMenuOpen = false">Take Assessment</a>
+        <a routerLink="/mbti" routerLinkActive="active" (click)="isMenuOpen = false">MBTI Test</a>
+        @if (authService.isAdmin()) {
+          <a routerLink="/admin" routerLinkActive="active" (click)="isMenuOpen = false">Admin</a>
+        }
         <button class="btn btn-outline btn-sm" (click)="logout()">Logout</button>
       } @else {
         <a routerLink="/login" class="btn btn-outline btn-sm" (click)="isMenuOpen = false">Login</a>

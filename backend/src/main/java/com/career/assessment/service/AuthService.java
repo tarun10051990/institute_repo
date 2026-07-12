@@ -44,18 +44,12 @@ public class AuthService {
                 .educationLevel(level)
                 .schoolName(request.getSchoolName())
                 .city(request.getCity())
+                .role(User.Role.USER)
                 .build();
 
         user = userRepository.save(user);
 
-        String token = tokenProvider.generateToken(user.getEmail(), user.getId());
-        return AuthResponse.builder()
-                .token(token)
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .userId(user.getId())
-                .build();
+        return buildResponse(user);
     }
 
     public AuthResponse login(AuthRequest request) {
@@ -66,13 +60,19 @@ public class AuthService {
             throw new RuntimeException("Invalid email or password");
         }
 
+        return buildResponse(user);
+    }
+
+    private AuthResponse buildResponse(User user) {
         String token = tokenProvider.generateToken(user.getEmail(), user.getId());
+        User.Role role = user.getRole() != null ? user.getRole() : User.Role.USER;
         return AuthResponse.builder()
                 .token(token)
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .userId(user.getId())
+                .role(role.name())
                 .build();
     }
 }

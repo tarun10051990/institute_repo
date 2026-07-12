@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS users (
     education_level ENUM('CLASS_8_9', 'CLASS_10_12', 'GRADUATE', 'PROFESSIONAL') NOT NULL DEFAULT 'CLASS_10_12',
     school_name VARCHAR(255),
     city VARCHAR(100),
+    role ENUM('USER', 'ADMIN') NOT NULL DEFAULT 'USER',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -119,4 +120,52 @@ CREATE TABLE IF NOT EXISTS career_recommendations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (session_id) REFERENCES assessment_sessions(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- MBTI questions (managed by admin)
+CREATE TABLE IF NOT EXISTS mbti_questions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    dimension VARCHAR(2) NOT NULL,
+    question_text TEXT NOT NULL,
+    display_order INT NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- MBTI answer options (two per question, each carrying a letter)
+CREATE TABLE IF NOT EXISTS mbti_options (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    question_id BIGINT NOT NULL,
+    option_label VARCHAR(1) NOT NULL,
+    option_text TEXT NOT NULL,
+    letter VARCHAR(1) NOT NULL,
+    display_order INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (question_id) REFERENCES mbti_questions(id) ON DELETE CASCADE
+);
+
+-- MBTI type profiles (report content, managed by admin). List fields are newline-separated.
+CREATE TABLE IF NOT EXISTS mbti_type_profiles (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    type_code VARCHAR(4) NOT NULL UNIQUE,
+    nickname VARCHAR(100) NOT NULL,
+    summary TEXT,
+    overview TEXT,
+    strengths TEXT,
+    weaknesses TEXT,
+    careers TEXT,
+    relationships TEXT,
+    growth_tips TEXT
+);
+
+-- Persisted MBTI results (part of an assessment session). dimensions stored as JSON.
+CREATE TABLE IF NOT EXISTS mbti_results (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    session_id BIGINT,
+    type_code VARCHAR(4) NOT NULL,
+    nickname VARCHAR(100),
+    dimensions_json TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (session_id) REFERENCES assessment_sessions(id) ON DELETE CASCADE
 );

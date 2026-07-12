@@ -23,6 +23,8 @@ public class AssessmentService {
     private final CategoryRepository categoryRepository;
     private final CategoryScoreRepository scoreRepository;
     private final CareerRecommendationRepository recommendationRepository;
+    private final MbtiResultRepository mbtiResultRepository;
+    private final MbtiService mbtiService;
 
     public AssessmentService(
             AssessmentSessionRepository sessionRepository,
@@ -32,7 +34,9 @@ public class AssessmentService {
             UserResponseRepository responseRepository,
             CategoryRepository categoryRepository,
             CategoryScoreRepository scoreRepository,
-            CareerRecommendationRepository recommendationRepository) {
+            CareerRecommendationRepository recommendationRepository,
+            MbtiResultRepository mbtiResultRepository,
+            MbtiService mbtiService) {
         this.sessionRepository = sessionRepository;
         this.userRepository = userRepository;
         this.questionRepository = questionRepository;
@@ -41,6 +45,8 @@ public class AssessmentService {
         this.categoryRepository = categoryRepository;
         this.scoreRepository = scoreRepository;
         this.recommendationRepository = recommendationRepository;
+        this.mbtiResultRepository = mbtiResultRepository;
+        this.mbtiService = mbtiService;
     }
 
     @Transactional
@@ -129,6 +135,13 @@ public class AssessmentService {
         AssessmentSession session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
         return toSessionDTO(session);
+    }
+
+    /** Returns the id of the user that owns the given session. */
+    public Long getSessionOwnerId(Long sessionId) {
+        AssessmentSession session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new RuntimeException("Session not found"));
+        return session.getUser().getId();
     }
 
     private List<CategoryScore> calculateScores(AssessmentSession session, Long userId) {
@@ -421,6 +434,11 @@ public class AssessmentService {
                         .build())
                 .collect(Collectors.toList());
 
+        MbtiResultDTO mbti = mbtiResultRepository
+                .findTopBySessionIdOrderByCreatedAtDesc(session.getId())
+                .map(mbtiService::toDto)
+                .orElse(null);
+
         return AssessmentResultDTO.builder()
                 .sessionId(session.getId())
                 .sessionCode(session.getSessionCode())
@@ -430,6 +448,7 @@ public class AssessmentService {
                 .categoryScores(scoreDTOs)
                 .careerRecommendations(recDTOs)
                 .overallSummary("Assessment completed successfully. Based on your responses across 5 dimensions, we have identified your top career matches.")
+                .mbti(mbti)
                 .build();
     }
 

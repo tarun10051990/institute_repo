@@ -1,0 +1,209 @@
+<section class="admin-page">
+  <div class="container">
+    <div class="admin-header">
+      <h1>Admin Dashboard</h1>
+      <p>Manage users, reports, questions and content</p>
+    </div>
+
+    <div class="admin-tabs">
+      <button [class.active]="activeTab === 'users'" (click)="setTab('users')">Users</button>
+      <button [class.active]="activeTab === 'reports'" (click)="setTab('reports')">Reports &amp; PDFs</button>
+      <button [class.active]="activeTab === 'questions'" (click)="setTab('questions')">MBTI Questions</button>
+      <button [class.active]="activeTab === 'content'" (click)="setTab('content')">MBTI Content</button>
+    </div>
+
+    @if (message) {
+      <div class="admin-message">{{ message }}</div>
+    }
+
+    @if (loading) {
+      <div class="loading"><div class="spinner"></div></div>
+    }
+
+    <!-- USERS -->
+    @if (activeTab === 'users' && !loading) {
+      <div class="card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th><th>Email</th><th>Role</th><th>Sessions</th><th>Completed</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users; track user.id) {
+              <tr>
+                <td>{{ user.firstName }} {{ user.lastName }}</td>
+                <td>{{ user.email }}</td>
+                <td><span class="role-badge" [class.admin]="user.role === 'ADMIN'">{{ user.role }}</span></td>
+                <td>{{ user.sessionCount }}</td>
+                <td>{{ user.completedCount }}</td>
+                <td>
+                  @if (user.role !== 'ADMIN') {
+                    <button class="btn btn-sm btn-danger" (click)="deleteUser(user)">Delete</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- REPORTS -->
+    @if (activeTab === 'reports' && !loading) {
+      <div class="card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Session</th><th>User</th><th>Email</th><th>Status</th><th>MBTI</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of sessions; track s.sessionId) {
+              <tr>
+                <td>{{ s.sessionCode }}</td>
+                <td>{{ s.userName }}</td>
+                <td>{{ s.email }}</td>
+                <td><span class="status-badge">{{ s.status }}</span></td>
+                <td>{{ s.mbtiType || '—' }}</td>
+                <td>
+                  <button class="btn btn-sm btn-primary" (click)="downloadPdf(s)">Download PDF</button>
+                </td>
+              </tr>
+            }
+            @if (sessions.length === 0) {
+              <tr><td colspan="6" class="empty">No sessions yet.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- MBTI QUESTIONS -->
+    @if (activeTab === 'questions' && !loading) {
+      <div class="card">
+        <div class="card-toolbar">
+          <h2>MBTI Questions ({{ questions.length }})</h2>
+          <button class="btn btn-sm btn-primary" (click)="newQuestion()">+ Add Question</button>
+        </div>
+
+        @if (editingQuestion) {
+          <div class="editor">
+            <h3>{{ editingQuestion.id ? 'Edit' : 'New' }} Question</h3>
+            <label>Dimension
+              <select [(ngModel)]="editingQuestion.dimension">
+                <option value="EI">E / I</option>
+                <option value="SN">S / N</option>
+                <option value="TF">T / F</option>
+                <option value="JP">J / P</option>
+              </select>
+            </label>
+            <label>Question text
+              <textarea rows="2" [(ngModel)]="editingQuestion.questionText"></textarea>
+            </label>
+            <label>Display order
+              <input type="number" [(ngModel)]="editingQuestion.displayOrder" />
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" [(ngModel)]="editingQuestion.active" /> Active
+            </label>
+
+            <h4>Options</h4>
+            @for (opt of editingQuestion.options; track $index) {
+              <div class="option-row">
+                <input class="opt-label" [(ngModel)]="opt.label" placeholder="A" />
+                <input class="opt-text" [(ngModel)]="opt.text" placeholder="Option text" />
+                <input class="opt-letter" [(ngModel)]="opt.letter" placeholder="E" maxlength="1" />
+              </div>
+            }
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-primary" (click)="saveQuestion()">Save</button>
+              <button class="btn btn-sm btn-outline" (click)="cancelQuestion()">Cancel</button>
+            </div>
+          </div>
+        }
+
+        <table class="admin-table">
+          <thead><tr><th>#</th><th>Dim</th><th>Question</th><th>Options</th><th>Active</th><th></th></tr></thead>
+          <tbody>
+            @for (q of questions; track q.id) {
+              <tr>
+                <td>{{ q.displayOrder }}</td>
+                <td>{{ q.dimension }}</td>
+                <td>{{ q.questionText }}</td>
+                <td>
+                  @for (o of q.options; track o.id) {
+                    <span class="opt-chip">{{ o.label }}:{{ o.letter }}</span>
+                  }
+                </td>
+                <td>{{ q.active ? 'Yes' : 'No' }}</td>
+                <td class="row-actions">
+                  <button class="btn btn-sm btn-outline" (click)="editQuestion(q)">Edit</button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteQuestion(q)">Delete</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- MBTI CONTENT -->
+    @if (activeTab === 'content' && !loading) {
+      <div class="card">
+        <div class="card-toolbar"><h2>MBTI Type Content ({{ profiles.length }})</h2></div>
+
+        @if (editingProfile) {
+          <div class="editor">
+            <h3>Edit {{ editingProfile.typeCode }}</h3>
+            <label>Nickname
+              <input [(ngModel)]="editingProfile.nickname" />
+            </label>
+            <label>Summary
+              <textarea rows="2" [(ngModel)]="editingProfile.summary"></textarea>
+            </label>
+            <label>Overview
+              <textarea rows="3" [(ngModel)]="editingProfile.overview"></textarea>
+            </label>
+            <label>Strengths (one per line)
+              <textarea rows="4" [ngModel]="linesToText(editingProfile.strengths)"
+                (ngModelChange)="textToLines($event, 'strengths')"></textarea>
+            </label>
+            <label>Blind spots (one per line)
+              <textarea rows="4" [ngModel]="linesToText(editingProfile.weaknesses)"
+                (ngModelChange)="textToLines($event, 'weaknesses')"></textarea>
+            </label>
+            <label>Careers (one per line)
+              <textarea rows="4" [ngModel]="linesToText(editingProfile.careers)"
+                (ngModelChange)="textToLines($event, 'careers')"></textarea>
+            </label>
+            <label>Relationships
+              <textarea rows="2" [(ngModel)]="editingProfile.relationships"></textarea>
+            </label>
+            <label>Growth tips
+              <textarea rows="2" [(ngModel)]="editingProfile.growthTips"></textarea>
+            </label>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-primary" (click)="saveProfile()">Save</button>
+              <button class="btn btn-sm btn-outline" (click)="cancelProfile()">Cancel</button>
+            </div>
+          </div>
+        }
+
+        <table class="admin-table">
+          <thead><tr><th>Type</th><th>Nickname</th><th>Summary</th><th></th></tr></thead>
+          <tbody>
+            @for (p of profiles; track p.id) {
+              <tr>
+                <td><strong>{{ p.typeCode }}</strong></td>
+                <td>{{ p.nickname }}</td>
+                <td class="truncate">{{ p.summary }}</td>
+                <td><button class="btn btn-sm btn-outline" (click)="editProfile(p)">Edit</button></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

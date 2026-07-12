@@ -103,6 +103,57 @@
         </div>
       }
 
+      <!-- MBTI Personality Type -->
+      @if (result.mbti) {
+        <div class="mbti-section">
+          <h2>Personality Type</h2>
+          <div class="mbti-hero">
+            <span class="mbti-code">{{ result.mbti.type }}</span>
+            <div>
+              <h3>{{ result.mbti.nickname }}</h3>
+              <p>{{ result.mbti.summary }}</p>
+            </div>
+          </div>
+          @if (result.mbti.overview) {
+            <p class="mbti-overview">{{ result.mbti.overview }}</p>
+          }
+          <div class="mbti-dimensions">
+            @for (dim of result.mbti.dimensions; track dim.dimension) {
+              <div class="mbti-dim">
+                <div class="mbti-dim-head">
+                  <span [class.active]="dim.chosenLetter === dim.leftLetter">{{ dim.leftLetter }} · {{ dim.leftName }}</span>
+                  <span [class.active]="dim.chosenLetter === dim.rightLetter">{{ dim.rightName }} · {{ dim.rightLetter }}</span>
+                </div>
+                <div class="mbti-dim-bar">
+                  <div class="mbti-dim-fill" [class.from-right]="dim.chosenLetter === dim.rightLetter" [style.width.%]="dim.strengthPercentage"></div>
+                </div>
+                <span class="mbti-dim-strength">{{ dim.strengthPercentage }}% {{ dim.chosenName }}</span>
+              </div>
+            }
+          </div>
+          <div class="mbti-lists">
+            @if (result.mbti.strengths.length) {
+              <div class="mbti-list">
+                <h4>Strengths</h4>
+                <ul>@for (s of result.mbti.strengths; track s) {<li>{{ s }}</li>}</ul>
+              </div>
+            }
+            @if (result.mbti.weaknesses.length) {
+              <div class="mbti-list">
+                <h4>Potential Blind Spots</h4>
+                <ul>@for (w of result.mbti.weaknesses; track w) {<li>{{ w }}</li>}</ul>
+              </div>
+            }
+            @if (result.mbti.careers.length) {
+              <div class="mbti-list">
+                <h4>Career Matches</h4>
+                <ul>@for (c of result.mbti.careers; track c) {<li>{{ c }}</li>}</ul>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
       <!-- Download CTA -->
       <div class="download-cta">
         <h2>Get Your Complete Report</h2>

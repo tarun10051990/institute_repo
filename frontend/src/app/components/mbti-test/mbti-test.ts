@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api';
+import { AssessmentService } from '../../services/assessment';
 import { MbtiQuestion, MbtiResult } from '../../models/interfaces';
 
 @Component({
@@ -17,10 +19,22 @@ export class MbtiTest implements OnInit {
   submitting = false;
   started = false;
   result: MbtiResult | null = null;
+  sessionId: number | null = null;
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private assessmentService: AssessmentService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
+
+  get assessmentMode(): boolean {
+    return this.sessionId != null;
+  }
 
   ngOnInit(): void {
+    const sid = this.route.snapshot.paramMap.get('sessionId');
+    this.sessionId = sid ? Number(sid) : null;
     this.apiService.getMbtiQuestions().subscribe({
       next: (questions) => {
         this.questions = questions;
@@ -81,11 +95,25 @@ export class MbtiTest implements OnInit {
       questionId: Number(questionId),
       letter,
     }));
-    this.apiService.submitMbti(payload).subscribe({
+    this.apiService.submitMbti(payload, this.sessionId ?? undefined).subscribe({
       next: (result) => {
-        this.result = result;
-        this.submitting = false;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (this.assessmentMode && this.sessionId != null) {
+          const sessionId = this.sessionId;
+          this.assessmentService.completeSession(sessionId).subscribe({
+            next: () => {
+              this.submitting = false;
+              this.router.navigate(['/results', sessionId]);
+            },
+            error: () => {
+              this.submitting = false;
+              this.router.navigate(['/results', sessionId]);
+            },
+          });
+        } else {
+          this.result = result;
+          this.submitting = false;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       },
       error: () => (this.submitting = false),
     });
