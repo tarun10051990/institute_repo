@@ -154,6 +154,96 @@
         </div>
       }
 
+      <!-- Grade-8 Detailed Report -->
+      @if (result.report; as report) {
+        <div class="grade8-report">
+          @if (report.studentProfile) {
+            <div class="report-block">
+              <h2>Student Profile Summary</h2>
+              <p>{{ report.studentProfile }}</p>
+            </div>
+          }
+
+          <!-- Multiple Intelligence -->
+          <div class="report-block">
+            <h2>Multiple Intelligence Analysis</h2>
+            <p class="block-summary">{{ report.multipleIntelligenceSummary }}</p>
+            <div class="trait-bars">
+              @for (t of report.multipleIntelligence; track t.code) {
+                <div class="trait-row">
+                  <span class="trait-name">{{ t.name }}</span>
+                  <div class="trait-bar"><div class="trait-fill" [style.width.%]="t.percentage"></div></div>
+                  <span class="trait-pct">{{ t.percentage }}%</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Learning Style -->
+          <div class="report-block">
+            <h2>Learning Style</h2>
+            <p class="block-summary"><strong>Preferred: {{ report.learningStyleName }}.</strong> {{ report.learningStyleSummary }}</p>
+            <div class="trait-bars">
+              @for (t of report.learningStyle; track t.code) {
+                <div class="trait-row">
+                  <span class="trait-name">{{ t.name }}</span>
+                  <div class="trait-bar"><div class="trait-fill alt" [style.width.%]="t.percentage"></div></div>
+                  <span class="trait-pct">{{ t.percentage }}%</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="report-columns">
+            <div class="report-block list-block">
+              <h3>Top Strengths</h3>
+              <ul>@for (s of report.topStrengths; track s) {<li>{{ s }}</li>}</ul>
+            </div>
+            <div class="report-block list-block">
+              <h3>Development Areas</h3>
+              <ul>@for (s of report.developmentAreas; track s) {<li>{{ s }}</li>}</ul>
+            </div>
+            <div class="report-block list-block">
+              <h3>Recommended Subjects (Classes 9-12)</h3>
+              <ul>@for (s of report.recommendedSubjects; track s) {<li>{{ s }}</li>}</ul>
+            </div>
+            <div class="report-block list-block">
+              <h3>Suggested Competitions</h3>
+              <ul>@for (s of report.competitions; track s) {<li>{{ s }}</li>}</ul>
+            </div>
+            <div class="report-block list-block">
+              <h3>Skill Development Plan</h3>
+              <ul>@for (s of report.skillDevelopmentPlan; track s) {<li>{{ s }}</li>}</ul>
+            </div>
+            <div class="report-block list-block">
+              <h3>Future Career Clusters</h3>
+              <ul>@for (s of report.careerClusters; track s) {<li>{{ s }}</li>}</ul>
+            </div>
+            <div class="report-block list-block">
+              <h3>Parent Guidance</h3>
+              <ul>@for (s of report.parentGuidance; track s) {<li>{{ s }}</li>}</ul>
+            </div>
+            <div class="report-block list-block">
+              <h3>Counsellor's Recommendations</h3>
+              <ul>@for (s of report.counsellorRecommendations; track s) {<li>{{ s }}</li>}</ul>
+            </div>
+          </div>
+
+          <!-- Action Plan -->
+          <div class="report-block">
+            <h2>Action Plan for the Next 2-3 Years</h2>
+            <div class="action-plan">
+              @for (phase of report.actionPlan; track phase.period) {
+                <div class="action-phase">
+                  <h4>{{ phase.period }}</h4>
+                  <ul>@for (item of phase.items; track item) {<li>{{ item }}</li>}</ul>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
       <!-- Download CTA -->
       <div class="download-cta">
         <h2>Get Your Complete Report</h2>

@@ -25,6 +25,7 @@ public class AssessmentService {
     private final CareerRecommendationRepository recommendationRepository;
     private final MbtiResultRepository mbtiResultRepository;
     private final MbtiService mbtiService;
+    private final Grade8ReportService grade8ReportService;
 
     public AssessmentService(
             AssessmentSessionRepository sessionRepository,
@@ -36,7 +37,8 @@ public class AssessmentService {
             CategoryScoreRepository scoreRepository,
             CareerRecommendationRepository recommendationRepository,
             MbtiResultRepository mbtiResultRepository,
-            MbtiService mbtiService) {
+            MbtiService mbtiService,
+            Grade8ReportService grade8ReportService) {
         this.sessionRepository = sessionRepository;
         this.userRepository = userRepository;
         this.questionRepository = questionRepository;
@@ -47,6 +49,7 @@ public class AssessmentService {
         this.recommendationRepository = recommendationRepository;
         this.mbtiResultRepository = mbtiResultRepository;
         this.mbtiService = mbtiService;
+        this.grade8ReportService = grade8ReportService;
     }
 
     @Transactional
@@ -214,6 +217,11 @@ public class AssessmentService {
             case "EQ" -> "Your EQ profile is led by " + formatTrait(topTrait)
                     + ". With a score of " + percentage + "%, you show strong "
                     + getEQDescription(topTrait) + ".";
+            case "MI" -> "Your most engaged intelligence appears to be " + formatTrait(topTrait)
+                    + ". Everyone has all eight intelligences in different mixes \u2014 this is simply where you seem "
+                    + "most naturally drawn right now.";
+            case "LEARNING_STYLE" -> "You tend to learn best through a " + formatTrait(topTrait)
+                    + " style. Use study methods that match this channel to learn faster and remember more.";
             default -> "Score: " + percentage + "%";
         };
     }
@@ -439,6 +447,11 @@ public class AssessmentService {
                 .map(mbtiService::toDto)
                 .orElse(null);
 
+        Map<String, Integer> miBreakdown = computeTraitBreakdown(session.getId(), "MI");
+        Map<String, Integer> lsBreakdown = computeTraitBreakdown(session.getId(), "LEARNING_STYLE");
+        Grade8ReportDTO report = grade8ReportService.build(
+                user, scoreDTOs, recDTOs, mbti, miBreakdown, lsBreakdown);
+
         return AssessmentResultDTO.builder()
                 .sessionId(session.getId())
                 .sessionCode(session.getSessionCode())
@@ -447,9 +460,44 @@ public class AssessmentService {
                 .completedAt(session.getCompletedAt())
                 .categoryScores(scoreDTOs)
                 .careerRecommendations(recDTOs)
-                .overallSummary("Assessment completed successfully. Based on your responses across 5 dimensions, we have identified your top career matches.")
+                .overallSummary("Assessment completed successfully. Based on your responses across the assessment dimensions, we have prepared a detailed, Grade-8 friendly report to guide your next steps.")
                 .mbti(mbti)
+                .report(report)
                 .build();
+    }
+
+    /**
+     * Computes a per-trait percentage breakdown for a Likert-based category
+     * (Multiple Intelligence or Learning Style). For each trait code the score
+     * is the sum of chosen option values over the maximum possible for the
+     * questions carrying that trait.
+     */
+    private Map<String, Integer> computeTraitBreakdown(Long sessionId, String categoryCode) {
+        Map<String, Integer> breakdown = new LinkedHashMap<>();
+        Category category = categoryRepository.findByCode(categoryCode).orElse(null);
+        if (category == null) {
+            return breakdown;
+        }
+        List<UserResponse> responses = responseRepository
+                .findBySessionIdAndCategoryId(sessionId, category.getId());
+
+        Map<String, Integer> sum = new HashMap<>();
+        Map<String, Integer> max = new HashMap<>();
+        for (UserResponse response : responses) {
+            AnswerOption selected = response.getSelectedOption();
+            String trait = selected.getTraitCode();
+            if (trait == null) {
+                continue;
+            }
+            sum.merge(trait, selected.getScoreValue(), Integer::sum);
+            max.merge(trait, 5, Integer::sum);
+        }
+        for (Map.Entry<String, Integer> e : sum.entrySet()) {
+            int denom = max.getOrDefault(e.getKey(), 1);
+            if (denom == 0) denom = 1;
+            breakdown.put(e.getKey(), (int) Math.round(e.getValue() * 100.0 / denom));
+        }
+        return breakdown;
     }
 
     private SessionDTO toSessionDTO(AssessmentSession session) {

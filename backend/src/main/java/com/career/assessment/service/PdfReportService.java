@@ -3,8 +3,10 @@ package com.career.assessment.service;
 import com.career.assessment.dto.AssessmentResultDTO;
 import com.career.assessment.dto.CareerRecommendationDTO;
 import com.career.assessment.dto.CategoryScoreDTO;
+import com.career.assessment.dto.Grade8ReportDTO;
 import com.career.assessment.dto.MbtiDimensionScoreDTO;
 import com.career.assessment.dto.MbtiResultDTO;
+import com.career.assessment.dto.TraitScoreDTO;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -89,6 +91,11 @@ public class PdfReportService {
 
         if (result.getMbti() != null) {
             addMbtiSection(document, result.getMbti(), boldFont, regularFont);
+            document.add(new AreaBreak());
+        }
+
+        if (result.getReport() != null) {
+            addGrade8Sections(document, result.getReport(), boldFont, regularFont);
             document.add(new AreaBreak());
         }
 
@@ -409,6 +416,107 @@ public class PdfReportService {
             doc.add(new Paragraph(mbti.getGrowthTips())
                     .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR));
         }
+    }
+
+    private void addGrade8Sections(Document doc, Grade8ReportDTO report, PdfFont bold, PdfFont regular) {
+        doc.add(new Paragraph("STUDENT PROFILE SUMMARY")
+                .setFont(bold).setFontSize(22).setFontColor(PRIMARY_COLOR)
+                .setBorderBottom(new SolidBorder(PRIMARY_COLOR, 2)).setPaddingBottom(10));
+        doc.add(new Paragraph("\n"));
+        if (report.getStudentProfile() != null) {
+            doc.add(new Paragraph(report.getStudentProfile())
+                    .setFont(regular).setFontSize(12).setFontColor(DARK_COLOR));
+        }
+
+        // Multiple Intelligence
+        doc.add(new Paragraph("MULTIPLE INTELLIGENCE ANALYSIS")
+                .setFont(bold).setFontSize(18).setFontColor(SECONDARY_COLOR).setMarginTop(18));
+        if (report.getMultipleIntelligenceSummary() != null) {
+            doc.add(new Paragraph(report.getMultipleIntelligenceSummary())
+                    .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR).setMarginBottom(6));
+        }
+        addTraitChart(doc, "Intelligence Profile", report.getMultipleIntelligence(), regular);
+
+        // Learning Style
+        doc.add(new Paragraph("LEARNING STYLE")
+                .setFont(bold).setFontSize(18).setFontColor(SECONDARY_COLOR).setMarginTop(18));
+        if (report.getLearningStyleName() != null) {
+            doc.add(new Paragraph("Preferred style: " + report.getLearningStyleName())
+                    .setFont(bold).setFontSize(12).setFontColor(PRIMARY_COLOR));
+        }
+        if (report.getLearningStyleSummary() != null) {
+            doc.add(new Paragraph(report.getLearningStyleSummary())
+                    .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR).setMarginBottom(6));
+        }
+        addTraitTable(doc, report.getLearningStyle(), bold, regular);
+
+        addBulletBlock(doc, "Top Strengths", report.getTopStrengths(), bold, regular, SECONDARY_COLOR);
+        addBulletBlock(doc, "Development Areas", report.getDevelopmentAreas(), bold, regular, ACCENT_COLOR);
+        addBulletBlock(doc, "Recommended Subjects (Classes 9-12)", report.getRecommendedSubjects(), bold, regular, PRIMARY_COLOR);
+        addBulletBlock(doc, "Suggested Competitions", report.getCompetitions(), bold, regular, PRIMARY_COLOR);
+        addBulletBlock(doc, "Suggested Skill Development Plan", report.getSkillDevelopmentPlan(), bold, regular, SECONDARY_COLOR);
+        addBulletBlock(doc, "Future Career Clusters", report.getCareerClusters(), bold, regular, PRIMARY_COLOR);
+        addBulletBlock(doc, "Parent Guidance", report.getParentGuidance(), bold, regular, ACCENT_COLOR);
+        addBulletBlock(doc, "Counsellor's Recommendations", report.getCounsellorRecommendations(), bold, regular, SECONDARY_COLOR);
+
+        if (report.getActionPlan() != null && !report.getActionPlan().isEmpty()) {
+            doc.add(new Paragraph("Action Plan for the Next 2-3 Years")
+                    .setFont(bold).setFontSize(14).setFontColor(PRIMARY_COLOR).setMarginTop(12));
+            for (Grade8ReportDTO.ActionPlanPhaseDTO phase : report.getActionPlan()) {
+                doc.add(new Paragraph(phase.getPeriod())
+                        .setFont(bold).setFontSize(12).setFontColor(SECONDARY_COLOR).setMarginTop(6));
+                if (phase.getItems() != null) {
+                    for (String item : phase.getItems()) {
+                        doc.add(new Paragraph("\u2022  " + item)
+                                .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR)
+                                .setPaddingLeft(10).setMarginBottom(2));
+                    }
+                }
+            }
+        }
+    }
+
+    private void addTraitChart(Document doc, String title, List<TraitScoreDTO> traits, PdfFont regular) {
+        if (traits == null || traits.isEmpty()) {
+            return;
+        }
+        try {
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            for (TraitScoreDTO t : traits) {
+                dataset.addValue(t.getPercentage(), "Score %", t.getName());
+            }
+            JFreeChart chart = ChartFactory.createBarChart(
+                    title, "", "Score (%)", dataset, PlotOrientation.HORIZONTAL, false, true, false);
+            chart.setBackgroundPaint(java.awt.Color.WHITE);
+            CategoryPlot plot = chart.getCategoryPlot();
+            plot.setBackgroundPaint(java.awt.Color.WHITE);
+            plot.setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
+            ((BarRenderer) plot.getRenderer()).setSeriesPaint(0, new java.awt.Color(0, 184, 148));
+
+            byte[] chartImage = chartToImage(chart, 500, 300);
+            com.itextpdf.layout.element.Image img = new com.itextpdf.layout.element.Image(ImageDataFactory.create(chartImage));
+            img.setWidth(UnitValue.createPercentValue(90));
+            img.setHorizontalAlignment(HorizontalAlignment.CENTER);
+            doc.add(img);
+        } catch (Exception e) {
+            doc.add(new Paragraph("Chart generation failed: " + e.getMessage())
+                    .setFont(regular).setFontSize(10));
+        }
+    }
+
+    private void addTraitTable(Document doc, List<TraitScoreDTO> traits, PdfFont bold, PdfFont regular) {
+        if (traits == null || traits.isEmpty()) {
+            return;
+        }
+        Table table = new Table(UnitValue.createPercentArray(new float[]{3, 1}))
+                .setWidth(UnitValue.createPercentValue(80));
+        table.addHeaderCell(createHeaderCell("Style", bold));
+        table.addHeaderCell(createHeaderCell("Score", bold));
+        for (TraitScoreDTO t : traits) {
+            table.addCell(createDataCell(t.getName(), regular));
+            table.addCell(createDataCell(t.getPercentage() + "%", regular));
+        }
+        doc.add(table);
     }
 
     private void addBulletBlock(Document doc, String title, List<String> items,
