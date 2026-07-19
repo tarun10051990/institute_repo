@@ -132,6 +132,35 @@ export interface MbtiResult {
   growthTips: string;
 }
 
+export interface TraitScore {
+  code: string;
+  name: string;
+  percentage: number;
+}
+
+export interface ActionPlanPhase {
+  period: string;
+  items: string[];
+}
+
+export interface Grade8Report {
+  studentProfile: string;
+  multipleIntelligence: TraitScore[];
+  multipleIntelligenceSummary: string;
+  learningStyle: TraitScore[];
+  learningStyleName: string;
+  learningStyleSummary: string;
+  topStrengths: string[];
+  developmentAreas: string[];
+  recommendedSubjects: string[];
+  competitions: string[];
+  skillDevelopmentPlan: string[];
+  careerClusters: string[];
+  parentGuidance: string[];
+  counsellorRecommendations: string[];
+  actionPlan: ActionPlanPhase[];
+}
+
 export interface AssessmentResult {
   sessionId: number;
   sessionCode: string;
@@ -142,6 +171,7 @@ export interface AssessmentResult {
   careerRecommendations: CareerRecommendation[];
   overallSummary: string;
   mbti?: MbtiResult;
+  report?: Grade8Report;
 }
 
 export interface AdminUser {

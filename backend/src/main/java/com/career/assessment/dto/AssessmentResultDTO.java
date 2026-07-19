@@ -15,4 +15,5 @@ public class AssessmentResultDTO {
     private List<CareerRecommendationDTO> careerRecommendations;
     private String overallSummary;
     private MbtiResultDTO mbti;
+    private Grade8ReportDTO report;
 }
