@@ -1,0 +1,186 @@
+<section class="mbti-page">
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading personality test...</p>
+    </div>
+  } @else if (result) {
+    <!-- ===== REPORT ===== -->
+    <div class="container report">
+      <div class="report-hero">
+        <span class="report-eyebrow">Your MBTI Personality Type</span>
+        <h1 class="type-code">{{ result.type }}</h1>
+        <h2 class="type-nickname">{{ result.nickname }}</h2>
+        <p class="type-summary">{{ result.summary }}</p>
+      </div>
+
+      <div class="report-card">
+        <h3>Overview</h3>
+        <p>{{ result.overview }}</p>
+      </div>
+
+      <div class="report-card">
+        <h3>Your Four Preferences</h3>
+        <div class="dimensions">
+          @for (dim of result.dimensions; track dim.dimension) {
+            <div class="dimension">
+              <div class="dimension-head">
+                <span class="pole" [class.active]="dim.chosenLetter === dim.leftLetter">
+                  {{ dim.leftLetter }} · {{ dim.leftName }}
+                </span>
+                <span class="pole right" [class.active]="dim.chosenLetter === dim.rightLetter">
+                  {{ dim.rightName }} · {{ dim.rightLetter }}
+                </span>
+              </div>
+              <div class="dimension-bar">
+                <div
+                  class="dimension-fill"
+                  [class.from-right]="dim.chosenLetter === dim.rightLetter"
+                  [style.width.%]="dim.strengthPercentage"
+                ></div>
+                <span class="dimension-badge">{{ dim.chosenLetter }} · {{ dim.strengthPercentage }}%</span>
+              </div>
+              <p class="dimension-desc">{{ dim.description }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="report-grid">
+        <div class="report-card">
+          <h3>Strengths</h3>
+          <ul class="tick-list">
+            @for (item of result.strengths; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </div>
+        <div class="report-card">
+          <h3>Potential Blind Spots</h3>
+          <ul class="cross-list">
+            @for (item of result.weaknesses; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="report-card">
+        <h3>Careers That Fit You</h3>
+        <div class="careers">
+          @for (career of result.careers; track career) {
+            <span class="career-chip">{{ career }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="report-grid">
+        <div class="report-card">
+          <h3>Relationships</h3>
+          <p>{{ result.relationships }}</p>
+        </div>
+        <div class="report-card">
+          <h3>Growth Tips</h3>
+          <p>{{ result.growthTips }}</p>
+        </div>
+      </div>
+
+      <div class="report-actions">
+        <button class="btn btn-outline" (click)="restart()">Retake Test</button>
+      </div>
+    </div>
+  } @else if (!started) {
+    <!-- ===== INTRO ===== -->
+    <div class="container intro">
+      <div class="intro-card">
+        <span class="intro-eyebrow">Personality Assessment</span>
+        <h1>MBTI Personality Test</h1>
+        @if (assessmentMode) {
+          <p class="assessment-note">
+            This is the final part of your career assessment. Your personality type will be
+            saved with your results and included in your downloadable PDF report.
+          </p>
+        }
+        <p>
+          Answer {{ questions.length }} quick either/or questions about how you think, feel, and
+          act. We'll identify your four-letter personality type and generate a detailed report
+          covering your strengths, blind spots, ideal careers, and growth tips.
+        </p>
+        <ul class="intro-points">
+          <li>Extraversion (E) vs Introversion (I)</li>
+          <li>Sensing (S) vs Intuition (N)</li>
+          <li>Thinking (T) vs Feeling (F)</li>
+          <li>Judging (J) vs Perceiving (P)</li>
+        </ul>
+        <button class="btn btn-primary btn-lg" (click)="startTest()">Start the Test</button>
+      </div>
+    </div>
+  } @else if (currentQuestion) {
+    <!-- ===== TEST ===== -->
+    <div class="test-header">
+      <div class="container">
+        <div class="test-header-content">
+          <div class="category-info">
+            <h2>MBTI Personality Test</h2>
+            <span class="question-counter">Question {{ currentIndex + 1 }} of {{ questions.length }}</span>
+          </div>
+          <div class="progress-wrapper">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="progress"></div>
+            </div>
+            <span class="progress-text">{{ progress | number:'1.0-0' }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container test-content">
+      <div class="question-card">
+        <div class="question-number">Q{{ currentIndex + 1 }}</div>
+        <h3 class="question-text">{{ currentQuestion.questionText }}</h3>
+
+        <div class="options-grid">
+          @for (option of currentQuestion.options; track option.letter) {
+            <button
+              class="option-btn"
+              [class.selected]="answers[currentQuestion.id] === option.letter"
+              (click)="selectOption(currentQuestion.id, option.letter)"
+            >
+              <span class="option-label">{{ option.label }}</span>
+              <span class="option-text">{{ option.text }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button class="btn btn-outline" (click)="prevQuestion()" [disabled]="currentIndex === 0">
+          Previous
+        </button>
+
+        @if (allAnswered) {
+          <button class="btn btn-primary" (click)="submit()" [disabled]="submitting">
+            {{ submitting ? 'Analyzing...' : (assessmentMode ? 'Finish & See Full Report' : 'See My Result') }}
+          </button>
+        } @else {
+          <button class="btn btn-primary" (click)="nextQuestion()" [disabled]="currentIndex === questions.length - 1">
+            Next
+          </button>
+        }
+      </div>
+
+      <div class="question-nav">
+        @for (q of questions; track q.id; let i = $index) {
+          <button
+            class="q-dot"
+            [class.current]="i === currentIndex"
+            [class.answered]="answers[q.id] !== undefined"
+            (click)="goToQuestion(i)"
+          >
+            {{ i + 1 }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</section>

@@ -1,0 +1,60 @@
+<section class="programs-hero">
+  <div class="container">
+    <h1>Assessment <span class="highlight">Programs</span></h1>
+    <p>Explore our 5-dimensional career assessment categories designed to evaluate every aspect of your career potential</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    @if (loading) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading assessment categories...</p>
+      </div>
+    } @else {
+      <div class="programs-grid">
+        @for (cat of categories; track cat.id) {
+          <div class="program-card" [style.border-top-color]="getColor(cat.code)">
+            <div class="program-icon" [innerHTML]="getIcon(cat.code)" [style.color]="getColor(cat.code)"></div>
+            <h3>{{ cat.name }}</h3>
+            <p class="program-desc">{{ cat.description }}</p>
+            <div class="program-meta">
+              <span><strong>{{ cat.totalQuestions }}</strong> Questions</span>
+              <span><strong>{{ cat.timeLimitMinutes }}</strong> Minutes</span>
+            </div>
+            <a routerLink="/register" class="btn btn-outline btn-sm">Start Assessment</a>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<section class="info-section section">
+  <div class="container">
+    <h2 class="section-title">Assessment Overview</h2>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>How It Works</h3>
+        <ul>
+          <li>Register and create your profile</li>
+          <li>Start the assessment from your dashboard</li>
+          <li>Answer questions across all 5 categories</li>
+          <li>Complete all categories to generate your report</li>
+          <li>Download your detailed PDF career report</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>What You Get</h3>
+        <ul>
+          <li>Category-wise score breakdown with percentages</li>
+          <li>Visual charts: Bar graphs &amp; Pie charts</li>
+          <li>Detailed trait analysis for each dimension</li>
+          <li>Top 5 career recommendations with match %</li>
+          <li>Personalized development plan &amp; next steps</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

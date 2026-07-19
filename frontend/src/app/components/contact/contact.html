@@ -1,0 +1,64 @@
+<section class="contact-hero">
+  <div class="container">
+    <h1>Contact <span class="highlight">Us</span></h1>
+    <p>Have questions about our career assessment? We'd love to hear from you</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h2>Get in Touch</h2>
+        <p>Fill out the form and our team will get back to you within 24 hours.</p>
+        <div class="contact-details">
+          <div class="contact-item">
+            <span class="contact-icon">&#128231;</span>
+            <div>
+              <h4>Email</h4>
+              <p>info&#64;careerpath.com</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">&#128222;</span>
+            <div>
+              <h4>Phone</h4>
+              <p>+91 98765 43210</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">&#128205;</span>
+            <div>
+              <h4>Address</h4>
+              <p>New Delhi, India</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form-wrapper">
+        @if (submitted) {
+          <div class="success-message">
+            <h3>Thank You!</h3>
+            <p>Your message has been received. We'll get back to you soon.</p>
+          </div>
+        } @else {
+          <form (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" [(ngModel)]="name" name="name" placeholder="Your name" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="Your email" required />
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" [(ngModel)]="message" name="message" rows="5" placeholder="How can we help?" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Send Message</button>
+          </form>
+        }
+      </div>
+    </div>
+  </div>
+</section>

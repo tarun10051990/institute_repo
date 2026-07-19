@@ -1,0 +1,32 @@
+<nav class="navbar">
+  <div class="container navbar-content">
+    <a routerLink="/" class="navbar-brand">
+      <span class="brand-icon">&#9670;</span>
+      <span class="brand-text">CareerPath</span>
+    </a>
+
+    <button class="menu-toggle" (click)="toggleMenu()">
+      <span class="hamburger" [class.active]="isMenuOpen"></span>
+    </button>
+
+    <div class="nav-links" [class.active]="isMenuOpen">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuOpen = false">Home</a>
+      <a routerLink="/about" routerLinkActive="active" (click)="isMenuOpen = false">About</a>
+      <a routerLink="/programs" routerLinkActive="active" (click)="isMenuOpen = false">Programs</a>
+      <a routerLink="/contact" routerLinkActive="active" (click)="isMenuOpen = false">Contact</a>
+
+      @if (authService.isLoggedIn()) {
+        <a routerLink="/dashboard" routerLinkActive="active" (click)="isMenuOpen = false">Dashboard</a>
+        <a routerLink="/assessment" routerLinkActive="active" (click)="isMenuOpen = false">Take Assessment</a>
+        <a routerLink="/mbti" routerLinkActive="active" (click)="isMenuOpen = false">MBTI Test</a>
+        @if (authService.isAdmin()) {
+          <a routerLink="/admin" routerLinkActive="active" (click)="isMenuOpen = false">Admin</a>
+        }
+        <button class="btn btn-outline btn-sm" (click)="logout()">Logout</button>
+      } @else {
+        <a routerLink="/login" class="btn btn-outline btn-sm" (click)="isMenuOpen = false">Login</a>
+        <a routerLink="/register" class="btn btn-primary btn-sm" (click)="isMenuOpen = false">Sign Up Free</a>
+      }
+    </div>
+  </div>
+</nav>

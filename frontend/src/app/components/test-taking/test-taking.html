@@ -1,0 +1,75 @@
+<section class="test-page">
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading questions...</p>
+    </div>
+  } @else if (currentQuestion) {
+    <div class="test-header">
+      <div class="container">
+        <div class="test-header-content">
+          <div class="category-info">
+            <h2>{{ category?.name }}</h2>
+            <span class="question-counter">Question {{ currentIndex + 1 }} of {{ questions.length }}</span>
+          </div>
+          <div class="progress-wrapper">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="progress"></div>
+            </div>
+            <span class="progress-text">{{ progress | number:'1.0-0' }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container test-content">
+      <div class="question-card">
+        <div class="question-number">Q{{ currentIndex + 1 }}</div>
+        <h3 class="question-text">{{ currentQuestion.questionText }}</h3>
+
+        <div class="options-grid">
+          @for (option of currentQuestion.options; track option.id) {
+            <button
+              class="option-btn"
+              [class.selected]="selectedOptions[currentQuestion.id] === option.id"
+              (click)="selectOption(currentQuestion.id, option.id)"
+              [disabled]="submitting"
+            >
+              <span class="option-label">{{ option.optionLabel }}</span>
+              <span class="option-text">{{ option.optionText }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button class="btn btn-outline" (click)="prevQuestion()" [disabled]="currentIndex === 0">
+          Previous
+        </button>
+
+        @if (currentIndex === questions.length - 1 && answeredCount === questions.length) {
+          <button class="btn btn-primary" (click)="finishCategory()" [disabled]="completing">
+            {{ isLastCategory() ? 'Continue to Personality Test' : 'Next Category' }}
+          </button>
+        } @else {
+          <button class="btn btn-primary" (click)="nextQuestion()" [disabled]="currentIndex === questions.length - 1">
+            Next
+          </button>
+        }
+      </div>
+
+      <div class="question-nav">
+        @for (q of questions; track q.id; let i = $index) {
+          <button
+            class="q-dot"
+            [class.current]="i === currentIndex"
+            [class.answered]="selectedOptions[q.id] !== undefined"
+            (click)="goToQuestion(i)"
+          >
+            {{ i + 1 }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</section>
