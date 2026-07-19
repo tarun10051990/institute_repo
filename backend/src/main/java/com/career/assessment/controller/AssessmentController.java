@@ -8,10 +8,12 @@ import com.career.assessment.service.AssessmentService;
 import com.career.assessment.service.PdfReportService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,12 +53,16 @@ public class AssessmentController {
     }
 
     @GetMapping("/sessions/{sessionId}/results")
-    public ResponseEntity<AssessmentResultDTO> getResults(@PathVariable Long sessionId) {
+    public ResponseEntity<AssessmentResultDTO> getResults(@PathVariable Long sessionId,
+                                                          @AuthenticationPrincipal User user) {
+        verifyOwnership(sessionId, user);
         return ResponseEntity.ok(assessmentService.getResults(sessionId));
     }
 
     @GetMapping("/sessions/{sessionId}/status")
-    public ResponseEntity<SessionDTO> getSessionStatus(@PathVariable Long sessionId) {
+    public ResponseEntity<SessionDTO> getSessionStatus(@PathVariable Long sessionId,
+                                                       @AuthenticationPrincipal User user) {
+        verifyOwnership(sessionId, user);
         return ResponseEntity.ok(assessmentService.getSessionStatus(sessionId));
     }
 
@@ -66,7 +72,9 @@ public class AssessmentController {
     }
 
     @GetMapping("/sessions/{sessionId}/report/pdf")
-    public ResponseEntity<byte[]> downloadPdfReport(@PathVariable Long sessionId) throws IOException {
+    public ResponseEntity<byte[]> downloadPdfReport(@PathVariable Long sessionId,
+                                                    @AuthenticationPrincipal User user) throws IOException {
+        verifyOwnership(sessionId, user);
         AssessmentResultDTO result = assessmentService.getResults(sessionId);
         byte[] pdfBytes = pdfReportService.generateReport(result);
 
@@ -76,5 +84,14 @@ public class AssessmentController {
                 "career-assessment-report-" + result.getSessionCode() + ".pdf");
 
         return ResponseEntity.ok().headers(headers).body(pdfBytes);
+    }
+
+    /** Ensures a session belongs to the requesting user (admins bypass via the /api/admin API). */
+    private void verifyOwnership(Long sessionId, User user) {
+        Long ownerId = assessmentService.getSessionOwnerId(sessionId);
+        boolean isAdmin = user.getRole() == User.Role.ADMIN;
+        if (!isAdmin && !ownerId.equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this session");
+        }
     }
 }

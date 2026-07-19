@@ -3,6 +3,8 @@ package com.career.assessment.service;
 import com.career.assessment.dto.AssessmentResultDTO;
 import com.career.assessment.dto.CareerRecommendationDTO;
 import com.career.assessment.dto.CategoryScoreDTO;
+import com.career.assessment.dto.MbtiDimensionScoreDTO;
+import com.career.assessment.dto.MbtiResultDTO;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -84,6 +86,11 @@ public class PdfReportService {
 
         addCareerRecommendations(document, result.getCareerRecommendations(), boldFont, regularFont);
         document.add(new AreaBreak());
+
+        if (result.getMbti() != null) {
+            addMbtiSection(document, result.getMbti(), boldFont, regularFont);
+            document.add(new AreaBreak());
+        }
 
         addDevelopmentPlan(document, result, boldFont, regularFont);
 
@@ -345,6 +352,76 @@ public class PdfReportService {
             card.addCell(bodyCell);
 
             doc.add(card);
+        }
+    }
+
+    private void addMbtiSection(Document doc, MbtiResultDTO mbti, PdfFont bold, PdfFont regular) {
+        doc.add(new Paragraph("PERSONALITY TYPE (MBTI)")
+                .setFont(bold).setFontSize(22).setFontColor(PRIMARY_COLOR)
+                .setBorderBottom(new SolidBorder(PRIMARY_COLOR, 2)).setPaddingBottom(10));
+        doc.add(new Paragraph("\n"));
+
+        doc.add(new Paragraph(mbti.getType() + (mbti.getNickname() != null ? "  \u2014  " + mbti.getNickname() : ""))
+                .setFont(bold).setFontSize(28).setFontColor(SECONDARY_COLOR)
+                .setTextAlignment(TextAlignment.CENTER));
+        if (mbti.getSummary() != null) {
+            doc.add(new Paragraph(mbti.getSummary())
+                    .setFont(regular).setFontSize(12).setFontColor(DARK_COLOR)
+                    .setTextAlignment(TextAlignment.CENTER).setMarginBottom(10));
+        }
+        if (mbti.getOverview() != null) {
+            doc.add(new Paragraph(mbti.getOverview())
+                    .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR).setMarginBottom(10));
+        }
+
+        if (mbti.getDimensions() != null && !mbti.getDimensions().isEmpty()) {
+            doc.add(new Paragraph("Preference Strengths")
+                    .setFont(bold).setFontSize(14).setFontColor(PRIMARY_COLOR).setMarginTop(10));
+
+            Table dimTable = new Table(UnitValue.createPercentArray(new float[]{2, 1, 3}))
+                    .setWidth(UnitValue.createPercentValue(100));
+            dimTable.addHeaderCell(createHeaderCell("Dimension", bold));
+            dimTable.addHeaderCell(createHeaderCell("Preference", bold));
+            dimTable.addHeaderCell(createHeaderCell("Strength", bold));
+
+            for (MbtiDimensionScoreDTO dim : mbti.getDimensions()) {
+                dimTable.addCell(createDataCell(dim.getLeftName() + " (" + dim.getLeftLetter() + ") / "
+                        + dim.getRightName() + " (" + dim.getRightLetter() + ")", regular));
+                dimTable.addCell(createDataCell(dim.getChosenName() + " (" + dim.getChosenLetter() + ")", regular));
+                dimTable.addCell(createDataCell(dim.getStrengthPercentage() + "%", regular));
+            }
+            doc.add(dimTable);
+        }
+
+        addBulletBlock(doc, "Key Strengths", mbti.getStrengths(), bold, regular, SECONDARY_COLOR);
+        addBulletBlock(doc, "Potential Blind Spots", mbti.getWeaknesses(), bold, regular, ACCENT_COLOR);
+        addBulletBlock(doc, "Career Matches", mbti.getCareers(), bold, regular, PRIMARY_COLOR);
+
+        if (mbti.getRelationships() != null) {
+            doc.add(new Paragraph("Relationships")
+                    .setFont(bold).setFontSize(14).setFontColor(PRIMARY_COLOR).setMarginTop(12));
+            doc.add(new Paragraph(mbti.getRelationships())
+                    .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR));
+        }
+        if (mbti.getGrowthTips() != null) {
+            doc.add(new Paragraph("Growth Tips")
+                    .setFont(bold).setFontSize(14).setFontColor(PRIMARY_COLOR).setMarginTop(12));
+            doc.add(new Paragraph(mbti.getGrowthTips())
+                    .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR));
+        }
+    }
+
+    private void addBulletBlock(Document doc, String title, List<String> items,
+                                PdfFont bold, PdfFont regular, DeviceRgb color) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        doc.add(new Paragraph(title)
+                .setFont(bold).setFontSize(14).setFontColor(color).setMarginTop(12));
+        for (String item : items) {
+            doc.add(new Paragraph("\u2022  " + item)
+                    .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR)
+                    .setPaddingLeft(10).setMarginBottom(2));
         }
     }
 

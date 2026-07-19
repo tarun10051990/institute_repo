@@ -222,3 +222,53 @@
   .charts-grid { grid-template-columns: 1fr; }
   .career-card { flex-direction: column; }
 }
+
+.mbti-section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+
+  h2 { margin-bottom: 20px; }
+
+  .mbti-hero {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 16px;
+
+    .mbti-code {
+      font-size: 48px;
+      font-weight: 800;
+      color: #2962ff;
+      letter-spacing: 2px;
+    }
+    h3 { margin: 0 0 6px; color: #00b894; }
+    p { margin: 0; color: #555; }
+  }
+
+  .mbti-overview { color: #444; line-height: 1.6; margin-bottom: 20px; }
+
+  .mbti-dimensions { display: grid; gap: 16px; margin-bottom: 24px; }
+  .mbti-dim-head {
+    display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px;
+    span.active { font-weight: 700; color: #2962ff; }
+  }
+  .mbti-dim-bar {
+    position: relative; height: 10px; background: #eef1f8; border-radius: 6px; overflow: hidden;
+  }
+  .mbti-dim-fill {
+    position: absolute; left: 0; top: 0; height: 100%;
+    background: #2962ff; border-radius: 6px;
+    &.from-right { left: auto; right: 0; background: #00b894; }
+  }
+  .mbti-dim-strength { font-size: 12px; color: #888; }
+
+  .mbti-lists {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;
+    h4 { margin: 0 0 8px; color: #2d3436; }
+    ul { margin: 0; padding-left: 18px; color: #555; }
+    li { margin-bottom: 4px; }
+  }
+}

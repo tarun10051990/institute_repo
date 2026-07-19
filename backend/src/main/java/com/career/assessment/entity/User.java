@@ -42,6 +42,11 @@ public class User {
     @Column(length = 100)
     private String city;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private Role role = Role.USER;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -61,5 +66,9 @@ public class User {
 
     public enum EducationLevel {
         CLASS_8_9, CLASS_10_12, GRADUATE, PROFESSIONAL
+    }
+
+    public enum Role {
+        USER, ADMIN
     }
 }

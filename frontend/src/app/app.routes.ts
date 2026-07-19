@@ -9,7 +9,10 @@ import { Assessment } from './components/assessment/assessment';
 import { TestTaking } from './components/test-taking/test-taking';
 import { Results } from './components/results/results';
 import { Contact } from './components/contact/contact';
+import { MbtiTest } from './components/mbti-test/mbti-test';
+import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
 import { authGuard } from './guards/auth-guard';
+import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -18,6 +21,9 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'contact', component: Contact },
+  { path: 'mbti', component: MbtiTest, canActivate: [authGuard] },
+  { path: 'mbti/:sessionId', component: MbtiTest, canActivate: [authGuard] },
+  { path: 'admin', component: AdminDashboard, canActivate: [adminGuard] },
   { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
   { path: 'assessment', component: Assessment, canActivate: [authGuard] },
   {

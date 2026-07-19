@@ -49,7 +49,7 @@
 
         @if (currentIndex === questions.length - 1 && answeredCount === questions.length) {
           <button class="btn btn-primary" (click)="finishCategory()" [disabled]="completing">
-            {{ isLastCategory() ? (completing ? 'Completing...' : 'Complete Assessment') : 'Next Category' }}
+            {{ isLastCategory() ? 'Continue to Personality Test' : 'Next Category' }}
           </button>
         } @else {
           <button class="btn btn-primary" (click)="nextQuestion()" [disabled]="currentIndex === questions.length - 1">

@@ -1,18 +1,18 @@
 package com.career.assessment.dto;
 
 import lombok.*;
+
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class AssessmentResultDTO {
+public class AdminSessionDTO {
     private Long sessionId;
     private String sessionCode;
+    private String status;
+    private Long userId;
     private String userName;
     private String email;
+    private String mbtiType;
     private LocalDateTime completedAt;
-    private List<CategoryScoreDTO> categoryScores;
-    private List<CareerRecommendationDTO> careerRecommendations;
-    private String overallSummary;
-    private MbtiResultDTO mbti;
+    private LocalDateTime createdAt;
 }
