@@ -20,6 +20,7 @@ import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.HorizontalAlignment;
@@ -307,8 +308,85 @@ public class PdfReportService {
             doc.add(new Paragraph("Your strongest interest area is " + top.getName()
                     + ". Explore activities, subjects and career clusters that draw on this interest, "
                     + "while staying open to your other areas too.")
-                    .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR).setMarginTop(8));
+                    .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR).setMarginTop(8).setMarginBottom(4));
         }
+
+        doc.add(new Paragraph("What Each Area Means & How to Grow It")
+                .setFont(bold).setFontSize(15).setFontColor(PRIMARY_COLOR).setMarginTop(12).setMarginBottom(6));
+        doc.add(new Paragraph("Interests are not fixed — the more you practise an area, the stronger it usually "
+                + "becomes. Below is what each area is about, what makes someone strong in it, and simple things "
+                + "you can do to build up the areas where your score is lower.")
+                .setFont(regular).setFontSize(10).setFontColor(DARK_COLOR).setMarginBottom(8));
+
+        for (TraitScoreDTO t : riasec) {
+            String code = t.getCode() == null ? "" : t.getCode().toUpperCase();
+
+            Div block = new Div().setKeepTogether(true).setMarginBottom(10);
+            block.add(new Paragraph(t.getName() + "  \u2014  " + t.getPercentage() + "%")
+                    .setFont(bold).setFontSize(12).setFontColor(SECONDARY_COLOR).setMarginBottom(2));
+            block.add(new Paragraph("What it is: " + riasecMeaning(code))
+                    .setFont(regular).setFontSize(10).setFontColor(DARK_COLOR).setMarginBottom(2));
+            block.add(new Paragraph("What makes someone strong here: " + riasecStrongWhen(code))
+                    .setFont(regular).setFontSize(10).setFontColor(DARK_COLOR).setMarginBottom(2));
+            block.add(new Paragraph("How to improve this area: " + riasecGrowth(code))
+                    .setFont(regular).setFontSize(10).setFontColor(DARK_COLOR)
+                    .setBackgroundColor(LIGHT_BG).setPadding(6));
+            doc.add(block);
+        }
+    }
+
+    private String riasecMeaning(String code) {
+        return switch (code) {
+            case "REALISTIC" -> "Working with your hands, tools, machines, plants or animals — practical, "
+                    + "hands-on 'doer' activities.";
+            case "INVESTIGATIVE" -> "Exploring, questioning and solving problems through observation, science "
+                    + "and analysis — the 'thinker' area.";
+            case "ARTISTIC" -> "Creating and expressing ideas through art, music, writing, design or performance "
+                    + "— the 'creator' area.";
+            case "SOCIAL" -> "Helping, teaching, guiding and caring for others and working closely with people "
+                    + "— the 'helper' area.";
+            case "ENTERPRISING" -> "Leading, persuading, organising people and starting things — the 'persuader' "
+                    + "area.";
+            case "CONVENTIONAL" -> "Organising information, following clear systems, and working carefully with "
+                    + "numbers, records and detail — the 'organiser' area.";
+            default -> "One of the six Holland interest areas.";
+        };
+    }
+
+    private String riasecStrongWhen(String code) {
+        return switch (code) {
+            case "REALISTIC" -> "You enjoy building, fixing or making things, being active, and seeing a real, "
+                    + "physical result from your effort.";
+            case "INVESTIGATIVE" -> "You like asking 'why' and 'how', enjoy maths and science, and prefer to "
+                    + "understand things deeply before acting.";
+            case "ARTISTIC" -> "You have lots of ideas, enjoy imagining and expressing yourself, and like tasks "
+                    + "that have no single 'right' answer.";
+            case "SOCIAL" -> "You feel energised by helping others, are a good listener, and enjoy teamwork, "
+                    + "teaching and encouraging people.";
+            case "ENTERPRISING" -> "You like taking the lead, sharing your opinions confidently, convincing "
+                    + "others and organising group activities.";
+            case "CONVENTIONAL" -> "You like neat, well-ordered work, are careful with details, and feel "
+                    + "comfortable following clear rules and plans.";
+            default -> "You are naturally drawn to this kind of activity.";
+        };
+    }
+
+    private String riasecGrowth(String code) {
+        return switch (code) {
+            case "REALISTIC" -> "Try hands-on hobbies — build models or simple electronics, join a robotics or "
+                    + "craft club, help with repairs at home, or take up gardening, sports or cooking.";
+            case "INVESTIGATIVE" -> "Do small science experiments, join a science/maths club, watch how-things-"
+                    + "work videos, ask questions and research answers, and try puzzles, coding or Olympiad practice.";
+            case "ARTISTIC" -> "Keep a sketch or writing journal, learn an instrument, try photography, drama or "
+                    + "design apps, and take part in art, music or creative-writing activities.";
+            case "SOCIAL" -> "Help classmates who are stuck, volunteer for community or school service, join group "
+                    + "projects, and practise really listening before you respond.";
+            case "ENTERPRISING" -> "Lead a group task, join debate or the student council, plan a small event or "
+                    + "sale, present your ideas to the class, and practise persuading with clear reasons.";
+            case "CONVENTIONAL" -> "Keep a tidy planner and to-do lists, help organise records or data, learn "
+                    + "spreadsheets, and practise finishing tasks accurately and on time.";
+            default -> "Try activities linked to this area and stay open to new experiences.";
+        };
     }
 
     private void addMbtiSection(Document doc, MbtiResultDTO mbti, PdfFont bold, PdfFont regular) {
