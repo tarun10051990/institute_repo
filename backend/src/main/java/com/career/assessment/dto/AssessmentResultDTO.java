@@ -12,6 +12,7 @@ public class AssessmentResultDTO {
     private String email;
     private LocalDateTime completedAt;
     private List<CategoryScoreDTO> categoryScores;
+    private List<TraitScoreDTO> riasec;
     private List<CareerRecommendationDTO> careerRecommendations;
     private String overallSummary;
     private MbtiResultDTO mbti;

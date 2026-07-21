@@ -452,6 +452,8 @@ public class AssessmentService {
         Grade8ReportDTO report = grade8ReportService.build(
                 user, scoreDTOs, recDTOs, mbti, miBreakdown, lsBreakdown);
 
+        List<TraitScoreDTO> riasec = computeRiasecProfile(session.getId());
+
         return AssessmentResultDTO.builder()
                 .sessionId(session.getId())
                 .sessionCode(session.getSessionCode())
@@ -459,6 +461,7 @@ public class AssessmentService {
                 .email(user.getEmail())
                 .completedAt(session.getCompletedAt())
                 .categoryScores(scoreDTOs)
+                .riasec(riasec)
                 .careerRecommendations(recDTOs)
                 .overallSummary("Assessment completed successfully. Based on your responses across the assessment dimensions, we have prepared a detailed, Grade-8 friendly report to guide your next steps.")
                 .mbti(mbti)
@@ -498,6 +501,57 @@ public class AssessmentService {
             breakdown.put(e.getKey(), (int) Math.round(e.getValue() * 100.0 / denom));
         }
         return breakdown;
+    }
+
+    private static final Map<String, String> RIASEC_NAMES = Map.of(
+            "REALISTIC", "Realistic (Doers)",
+            "INVESTIGATIVE", "Investigative (Thinkers)",
+            "ARTISTIC", "Artistic (Creators)",
+            "SOCIAL", "Social (Helpers)",
+            "ENTERPRISING", "Enterprising (Persuaders)",
+            "CONVENTIONAL", "Conventional (Organizers)");
+
+    private static final List<String> RIASEC_ORDER = List.of(
+            "REALISTIC", "INVESTIGATIVE", "ARTISTIC", "SOCIAL", "ENTERPRISING", "CONVENTIONAL");
+
+    /**
+     * Builds the RIASEC (Holland) interest profile from the INTEREST category
+     * responses. Each interest area's percentage is its share of the total
+     * interest score across all answered interest questions.
+     */
+    private List<TraitScoreDTO> computeRiasecProfile(Long sessionId) {
+        List<TraitScoreDTO> profile = new ArrayList<>();
+        Category interest = categoryRepository.findByCode("INTEREST").orElse(null);
+        if (interest == null) {
+            return profile;
+        }
+        List<UserResponse> responses = responseRepository
+                .findBySessionIdAndCategoryId(sessionId, interest.getId());
+
+        Map<String, Integer> sum = new HashMap<>();
+        int total = 0;
+        for (UserResponse response : responses) {
+            AnswerOption selected = response.getSelectedOption();
+            String trait = selected.getTraitCode();
+            if (trait == null) {
+                continue;
+            }
+            sum.merge(trait, selected.getScoreValue(), Integer::sum);
+            total += selected.getScoreValue();
+        }
+        if (total == 0) {
+            return profile;
+        }
+        for (String code : RIASEC_ORDER) {
+            int score = sum.getOrDefault(code, 0);
+            profile.add(TraitScoreDTO.builder()
+                    .code(code)
+                    .name(RIASEC_NAMES.getOrDefault(code, formatTrait(code)))
+                    .percentage((int) Math.round(score * 100.0 / total))
+                    .build());
+        }
+        profile.sort((a, b) -> Integer.compare(b.getPercentage(), a.getPercentage()));
+        return profile;
     }
 
     private SessionDTO toSessionDTO(AssessmentSession session) {
