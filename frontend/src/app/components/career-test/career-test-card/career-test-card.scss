@@ -1,0 +1,145 @@
+:host {
+  display: block;
+}
+
+.career-test-card {
+  position: relative;
+  overflow: hidden;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 44px 38px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: var(--gradient-primary);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.55;
+    transition: var(--transition);
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 28px 66px rgba(124, 58, 237, 0.26);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .glow {
+      transform: scale(1.25);
+      opacity: 0.85;
+    }
+  }
+
+  &.compact {
+    padding: 30px 24px;
+    max-width: 420px;
+  }
+}
+
+.glow {
+  position: absolute;
+  top: -110px;
+  right: -110px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: var(--gradient-yellow);
+  filter: blur(60px);
+  opacity: 0.55;
+  transition: var(--transition);
+  pointer-events: none;
+}
+
+.card-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.card-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--dark);
+  margin: 6px 0 0;
+}
+
+.card-desc {
+  font-size: 16px;
+  color: var(--dark-light);
+  max-width: 400px;
+  margin: 0;
+}
+
+.highlights {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 15px;
+    border-radius: var(--radius-pill);
+    background: rgba(124, 58, 237, 0.09);
+    color: var(--primary-dark);
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+.hl-icon {
+  font-size: 14px;
+}
+
+.card-note {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--gray-600);
+}
+
+@media (max-width: 600px) {
+  .career-test-card {
+    padding: 32px 20px;
+
+    &.compact {
+      padding: 26px 18px;
+    }
+  }
+
+  .card-title {
+    font-size: 24px;
+  }
+
+  .card-desc {
+    font-size: 15px;
+  }
+}

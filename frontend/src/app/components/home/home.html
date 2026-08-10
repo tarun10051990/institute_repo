@@ -1,13 +1,15 @@
 <!-- Hero Section -->
 <section class="hero">
+  <span class="blob blob-1" aria-hidden="true"></span>
+  <span class="blob blob-2" aria-hidden="true"></span>
   <div class="container hero-content">
     <div class="hero-text">
       <span class="hero-badge">5-Dimensional Career Assessment</span>
-      <h1>Discover Your <span class="highlight">Perfect Career</span></h1>
-      <p>Make smart decisions with our advanced AI-enabled career guidance tools. Take the most comprehensive psychometric assessment to find your best-fit career.</p>
+      <h1>Your Future <span class="highlight">Starts Here</span> <span aria-hidden="true">&#128640;</span></h1>
+      <p>Explore your strengths. Discover your potential. Build your career with the most comprehensive psychometric assessment made for students.</p>
       <div class="hero-actions">
-        <a routerLink="/register" class="btn btn-primary btn-lg">Take Free Assessment</a>
-        <a routerLink="/about" class="btn btn-outline btn-lg">Learn More</a>
+        <app-career-test-button label="Take Career Test" [large]="true" />
+        <a routerLink="/register" class="btn btn-outline btn-lg">Take Free Assessment</a>
       </div>
       <div class="hero-tags">
         <span>Career Assessment</span>
@@ -28,6 +30,15 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- Career Test Section -->
+<section class="section career-test-section" id="career-test">
+  <div class="container">
+    <h2 class="section-title">Not sure where to start?</h2>
+    <p class="section-subtitle">Take the Career Uday career test and get matched to the paths that fit you best.</p>
+    <app-career-test-card />
   </div>
 </section>
 
@@ -147,6 +158,9 @@
   <div class="container">
     <h2>Ready to Discover Your Perfect Career?</h2>
     <p>Take the free 5-dimensional assessment and get your personalized career report</p>
-    <a routerLink="/register" class="btn btn-primary btn-lg">Get Started Free</a>
+    <div class="cta-actions">
+      <a routerLink="/register" class="btn btn-accent btn-lg">Get Started Free</a>
+      <app-career-test-button label="Take Career Test" variant="light" [large]="true" />
+    </div>
   </div>
 </section>

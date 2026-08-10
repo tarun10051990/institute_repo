@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { AssessmentService } from '../../services/assessment';
 import { AuthResponse, Session } from '../../models/interfaces';
+import { CareerTestCard } from '../career-test/career-test-card/career-test-card';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, CareerTestCard],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })

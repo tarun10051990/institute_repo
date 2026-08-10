@@ -1,0 +1,24 @@
+<div class="career-test-card" [class.compact]="compact">
+  <div class="glow" aria-hidden="true"></div>
+
+  <div class="card-body">
+    <app-career-today-logo [size]="compact ? 'sm' : 'md'" />
+
+    <h3 class="card-title">{{ title }} <span aria-hidden="true">&#128640;</span></h3>
+    <p class="card-desc">{{ description }}</p>
+
+    @if (!compact) {
+      <ul class="highlights">
+        @for (item of highlights; track item.text) {
+          <li>
+            <span class="hl-icon" aria-hidden="true">{{ item.icon }}</span>
+            {{ item.text }}
+          </li>
+        }
+      </ul>
+    }
+
+    <app-career-test-button [label]="ctaLabel" [large]="!compact" />
+    <p class="card-note">Opens the Career Uday assessment in a new tab</p>
+  </div>
+</div>

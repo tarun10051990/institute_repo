@@ -1,7 +1,7 @@
 .footer {
-  background: var(--dark);
+  background: var(--gradient-dark);
   color: var(--gray-400);
-  padding: 60px 0 20px;
+  padding: 70px 0 24px;
 }
 
 .footer-grid {
@@ -16,7 +16,7 @@
     color: var(--white);
     font-size: 22px;
     margin-bottom: 12px;
-    .brand-icon { color: var(--secondary); }
+    .brand-icon { color: var(--yellow); }
   }
   p { font-size: 14px; line-height: 1.7; }
 }
@@ -34,6 +34,15 @@
     transition: var(--transition);
   }
   a:hover { color: var(--primary-light); }
+
+  .footer-career {
+    color: var(--yellow);
+    font-weight: 700;
+
+    &:hover {
+      color: var(--yellow-dark);
+    }
+  }
 }
 
 .footer-bottom {

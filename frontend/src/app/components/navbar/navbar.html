@@ -5,15 +5,32 @@
       <span class="brand-text">CareerPath</span>
     </a>
 
-    <button class="menu-toggle" (click)="toggleMenu()">
+    <button
+      class="menu-toggle"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-label="Toggle navigation menu"
+      aria-controls="primary-navigation"
+    >
       <span class="hamburger" [class.active]="isMenuOpen"></span>
     </button>
 
-    <div class="nav-links" [class.active]="isMenuOpen">
+    <div class="nav-links" id="primary-navigation" [class.active]="isMenuOpen">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuOpen = false">Home</a>
       <a routerLink="/about" routerLinkActive="active" (click)="isMenuOpen = false">About</a>
       <a routerLink="/programs" routerLinkActive="active" (click)="isMenuOpen = false">Programs</a>
       <a routerLink="/contact" routerLinkActive="active" (click)="isMenuOpen = false">Contact</a>
+      <a
+        class="nav-career"
+        [href]="careerTestUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Career Test (opens in a new tab)"
+        (click)="isMenuOpen = false"
+      >
+        Career Test <span aria-hidden="true">&#128640;</span>
+      </a>
 
       @if (authService.isLoggedIn()) {
         <a routerLink="/dashboard" routerLinkActive="active" (click)="isMenuOpen = false">Dashboard</a>

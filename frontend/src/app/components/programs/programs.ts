@@ -3,10 +3,11 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api';
 import { Category } from '../../models/interfaces';
+import { CareerTestCard } from '../career-test/career-test-card/career-test-card';
 
 @Component({
   selector: 'app-programs',
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, CareerTestCard],
   templateUrl: './programs.html',
   styleUrl: './programs.scss',
 })
@@ -23,11 +24,11 @@ export class Programs implements OnInit {
   };
 
   categoryColors: Record<string, string> = {
-    ORIENTATION: '#2962ff',
-    INTEREST: '#00b894',
-    PERSONALITY: '#fd79a8',
-    APTITUDE: '#ff9f43',
-    EQ: '#6c5ce7',
+    ORIENTATION: '#7c3aed',
+    INTEREST: '#008cff',
+    PERSONALITY: '#ec4899',
+    APTITUDE: '#ffb800',
+    EQ: '#10b981',
   };
 
   constructor(private apiService: ApiService) {}
@@ -47,6 +48,6 @@ export class Programs implements OnInit {
   }
 
   getColor(code: string): string {
-    return this.categoryColors[code] || '#2962ff';
+    return this.categoryColors[code] || '#7c3aed';
   }
 }

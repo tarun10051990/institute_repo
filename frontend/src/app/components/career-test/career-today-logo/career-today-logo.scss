@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.career-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 260px;
+  margin: 0 auto;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 26px rgba(255, 184, 0, 0.28);
+
+  &.size-sm {
+    max-width: 150px;
+  }
+
+  &.size-lg {
+    max-width: 340px;
+  }
+}
+
+@media (max-width: 600px) {
+  .career-logo {
+    max-width: 200px;
+
+    &.size-sm {
+      max-width: 130px;
+    }
+
+    &.size-lg {
+      max-width: 240px;
+    }
+  }
+}
