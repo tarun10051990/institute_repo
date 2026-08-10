@@ -1,10 +1,38 @@
 .hero {
-  background: linear-gradient(135deg, #f5f7ff 0%, #e8f4fd 50%, #f0f8ff 100%);
-  padding: 80px 0;
+  position: relative;
+  background: var(--gradient-soft);
+  padding: 90px 0 100px;
   overflow: hidden;
 }
 
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+
+  &-1 {
+    top: -120px;
+    left: -80px;
+    width: 380px;
+    height: 380px;
+    background: var(--gradient-primary);
+    opacity: 0.22;
+  }
+
+  &-2 {
+    bottom: -140px;
+    right: -60px;
+    width: 420px;
+    height: 420px;
+    background: var(--gradient-yellow);
+    opacity: 0.28;
+  }
+}
+
 .hero-content {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
@@ -13,25 +41,32 @@
 
 .hero-badge {
   display: inline-block;
-  background: rgba(41, 98, 255, 0.1);
-  color: var(--primary);
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  color: var(--primary-dark);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 22px;
 }
 
 .hero-text {
   h1 {
-    font-size: 48px;
-    font-weight: 800;
-    line-height: 1.2;
+    font-family: var(--font-heading);
+    font-size: 60px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
     margin-bottom: 20px;
     .highlight {
       color: var(--primary);
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: var(--gradient-primary);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
   }
@@ -45,6 +80,8 @@
 
 .hero-actions {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 16px;
   margin-bottom: 30px;
 }
@@ -69,7 +106,10 @@
 }
 
 .hero-card {
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: var(--radius-lg);
   padding: 30px;
   box-shadow: var(--shadow-lg);
@@ -105,9 +145,15 @@
   }
 }
 
+.career-test-section {
+  background: var(--white);
+  background-image: radial-gradient(circle at 15% 20%, rgba(124, 58, 237, 0.08), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(0, 140, 255, 0.08), transparent 45%);
+}
+
 .stats-section {
-  background: var(--primary);
-  padding: 40px 0;
+  background: var(--gradient-blue);
+  padding: 46px 0;
 }
 
 .stats-grid {
@@ -317,12 +363,12 @@
 }
 
 .cta-section {
-  background: linear-gradient(135deg, var(--primary), var(--purple));
-  padding: 80px 0;
+  background: var(--gradient-primary);
+  padding: 90px 0;
   text-align: center;
 
   h2 {
-    font-size: 36px;
+    font-size: 40px;
     font-weight: 800;
     color: var(--white);
     margin-bottom: 16px;
@@ -330,27 +376,49 @@
 
   p {
     font-size: 18px;
-    color: rgba(255, 255, 255, 0.85);
-    margin-bottom: 30px;
-  }
-
-  .btn {
-    background: var(--white);
-    color: var(--primary);
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    }
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 32px;
   }
 }
 
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+@media (max-width: 992px) {
+  .hero-text h1 { font-size: 46px; }
+}
+
 @media (max-width: 768px) {
+  .hero {
+    padding: 60px 0 70px;
+    text-align: center;
+  }
   .hero-content {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  .hero-text h1 { font-size: 32px; }
-  .hero-actions { flex-direction: column; }
+  .hero-text h1 { font-size: 36px; }
+  .hero-tags { justify-content: center; }
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    .btn { width: 100%; }
+  }
+  .cta-section {
+    padding: 60px 0;
+    h2 { font-size: 28px; }
+    p { font-size: 16px; }
+  }
+  .cta-actions {
+    flex-direction: column;
+    align-items: stretch;
+    .btn { width: 100%; }
+  }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .dimensions-grid { grid-template-columns: 1fr; }
   .steps-grid { grid-template-columns: 1fr; }

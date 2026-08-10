@@ -104,12 +104,12 @@
 
   &:hover {
     border-color: var(--primary-light);
-    background: rgba(41, 98, 255, 0.04);
+    background: rgba(124, 58, 237, 0.04);
   }
 
   &.selected {
     border-color: var(--primary);
-    background: rgba(41, 98, 255, 0.08);
+    background: rgba(124, 58, 237, 0.08);
 
     .option-label {
       background: var(--primary);
@@ -172,7 +172,7 @@
   &.current {
     border-color: var(--primary);
     color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(41, 98, 255, 0.2);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
   }
 
   &.answered {

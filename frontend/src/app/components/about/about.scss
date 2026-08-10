@@ -1,5 +1,5 @@
 .about-hero {
-  background: linear-gradient(135deg, #f5f7ff, #e8f4fd);
+  background: var(--gradient-soft);
   padding: 80px 0;
   text-align: center;
 
@@ -92,7 +92,7 @@
 }
 
 .cta-section {
-  background: linear-gradient(135deg, var(--primary), var(--purple));
+  background: var(--gradient-primary);
   padding: 80px 0;
   text-align: center;
 

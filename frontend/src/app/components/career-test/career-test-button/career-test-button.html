@@ -1,0 +1,13 @@
+<a
+  class="career-test-btn"
+  [class.variant-yellow]="variant === 'yellow'"
+  [class.variant-light]="variant === 'light'"
+  [class.is-large]="large"
+  [href]="url"
+  target="_blank"
+  rel="noopener noreferrer"
+  [attr.aria-label]="label + ' (opens in a new tab)'"
+>
+  <span class="label">{{ label }}</span>
+  <span class="arrow" aria-hidden="true">&#8594;</span>
+</a>

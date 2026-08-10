@@ -26,11 +26,11 @@ export class Assessment implements OnInit {
   };
 
   categoryColors: Record<string, string> = {
-    ORIENTATION: '#2962ff',
-    INTEREST: '#00b894',
-    PERSONALITY: '#fd79a8',
-    APTITUDE: '#ff9f43',
-    EQ: '#6c5ce7',
+    ORIENTATION: '#7c3aed',
+    INTEREST: '#008cff',
+    PERSONALITY: '#ec4899',
+    APTITUDE: '#ffb800',
+    EQ: '#10b981',
   };
 
   constructor(
@@ -84,6 +84,6 @@ export class Assessment implements OnInit {
   }
 
   getColor(code: string): string {
-    return this.categoryColors[code] || '#2962ff';
+    return this.categoryColors[code] || '#7c3aed';
   }
 }

@@ -50,7 +50,7 @@ export class Results implements OnInit {
     },
   };
 
-  chartColors = ['#2962ff', '#00b894', '#fd79a8', '#ff9f43', '#6c5ce7'];
+  chartColors = ['#7c3aed', '#008cff', '#ec4899', '#ffb800', '#10b981'];
 
   constructor(
     private route: ActivatedRoute,
@@ -100,9 +100,9 @@ export class Results implements OnInit {
       datasets: [
         {
           data: scores,
-          backgroundColor: 'rgba(41, 98, 255, 0.2)',
-          borderColor: '#2962ff',
-          pointBackgroundColor: '#2962ff',
+          backgroundColor: 'rgba(124, 58, 237, 0.2)',
+          borderColor: '#7c3aed',
+          pointBackgroundColor: '#7c3aed',
         },
       ],
     };

@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { CareerTestCard } from '../career-test/career-test-card/career-test-card';
+import { CareerTestButton } from '../career-test/career-test-button/career-test-button';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, CareerTestCard, CareerTestButton],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

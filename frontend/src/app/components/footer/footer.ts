@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CAREER_TEST_URL } from '../../models/career-test';
 
 @Component({
   selector: 'app-footer',
@@ -7,4 +8,6 @@ import { RouterLink } from '@angular/router';
   templateUrl: './footer.html',
   styleUrl: './footer.scss',
 })
-export class Footer {}
+export class Footer {
+  readonly careerTestUrl = CAREER_TEST_URL;
+}
