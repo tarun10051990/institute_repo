@@ -20,6 +20,7 @@ import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.HorizontalAlignment;
@@ -28,13 +29,9 @@ import com.itextpdf.layout.properties.UnitValue;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.SpiderWebPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.DefaultPieDataset;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -77,17 +74,16 @@ public class PdfReportService {
         addOverviewSection(document, result, boldFont, regularFont);
         document.add(new AreaBreak());
 
-        addBarChart(document, result.getCategoryScores(), boldFont, regularFont);
-        document.add(new AreaBreak());
-
-        addPieChart(document, result.getCategoryScores(), boldFont, regularFont);
-        document.add(new AreaBreak());
-
         addCategoryDetails(document, result.getCategoryScores(), boldFont, regularFont);
         document.add(new AreaBreak());
 
         addCareerRecommendations(document, result.getCareerRecommendations(), boldFont, regularFont);
         document.add(new AreaBreak());
+
+        if (result.getRiasec() != null && !result.getRiasec().isEmpty()) {
+            addRiasecSection(document, result.getRiasec(), boldFont, regularFont);
+            document.add(new AreaBreak());
+        }
 
         if (result.getMbti() != null) {
             addMbtiSection(document, result.getMbti(), boldFont, regularFont);
@@ -188,93 +184,6 @@ public class PdfReportService {
                 .setBackgroundColor(LIGHT_BG);
     }
 
-    private void addBarChart(Document doc, List<CategoryScoreDTO> scores, PdfFont bold, PdfFont regular) {
-        doc.add(new Paragraph("SCORE DISTRIBUTION")
-                .setFont(bold).setFontSize(22).setFontColor(PRIMARY_COLOR)
-                .setBorderBottom(new SolidBorder(PRIMARY_COLOR, 2)).setPaddingBottom(10));
-        doc.add(new Paragraph("\n"));
-
-        try {
-            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-            for (CategoryScoreDTO score : scores) {
-                dataset.addValue(score.getPercentage().doubleValue(), "Score %", score.getCategoryName());
-            }
-
-            JFreeChart chart = ChartFactory.createBarChart(
-                    "Category-wise Score Distribution", "Category", "Score (%)",
-                    dataset, PlotOrientation.VERTICAL, false, true, false);
-
-            chart.setBackgroundPaint(java.awt.Color.WHITE);
-            CategoryPlot plot = chart.getCategoryPlot();
-            plot.setBackgroundPaint(java.awt.Color.WHITE);
-            plot.setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
-
-            BarRenderer renderer = (BarRenderer) plot.getRenderer();
-            java.awt.Color[] colors = {
-                    new java.awt.Color(41, 98, 255),
-                    new java.awt.Color(0, 184, 148),
-                    new java.awt.Color(253, 121, 168),
-                    new java.awt.Color(255, 159, 67),
-                    new java.awt.Color(108, 92, 231)
-            };
-            for (int i = 0; i < scores.size(); i++) {
-                renderer.setSeriesPaint(0, colors[i % colors.length]);
-            }
-
-            byte[] chartImage = chartToImage(chart, 500, 300);
-            com.itextpdf.layout.element.Image img = new com.itextpdf.layout.element.Image(ImageDataFactory.create(chartImage));
-            img.setWidth(UnitValue.createPercentValue(90));
-            img.setHorizontalAlignment(HorizontalAlignment.CENTER);
-            doc.add(img);
-        } catch (Exception e) {
-            doc.add(new Paragraph("Chart generation failed: " + e.getMessage())
-                    .setFont(regular).setFontSize(10));
-        }
-    }
-
-    private void addPieChart(Document doc, List<CategoryScoreDTO> scores, PdfFont bold, PdfFont regular) {
-        doc.add(new Paragraph("SCORE BREAKDOWN")
-                .setFont(bold).setFontSize(22).setFontColor(PRIMARY_COLOR)
-                .setBorderBottom(new SolidBorder(PRIMARY_COLOR, 2)).setPaddingBottom(10));
-        doc.add(new Paragraph("\n"));
-
-        try {
-            DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
-            for (CategoryScoreDTO score : scores) {
-                dataset.setValue(score.getCategoryName(), score.getPercentage().doubleValue());
-            }
-
-            JFreeChart chart = ChartFactory.createPieChart(
-                    "Assessment Score Distribution", dataset, true, true, false);
-
-            chart.setBackgroundPaint(java.awt.Color.WHITE);
-            PiePlot<?> plot = (PiePlot<?>) chart.getPlot();
-            plot.setBackgroundPaint(java.awt.Color.WHITE);
-            plot.setOutlinePaint(null);
-            plot.setShadowPaint(null);
-
-            java.awt.Color[] colors = {
-                    new java.awt.Color(41, 98, 255),
-                    new java.awt.Color(0, 184, 148),
-                    new java.awt.Color(253, 121, 168),
-                    new java.awt.Color(255, 159, 67),
-                    new java.awt.Color(108, 92, 231)
-            };
-            for (int i = 0; i < scores.size(); i++) {
-                plot.setSectionPaint(scores.get(i).getCategoryName(), colors[i % colors.length]);
-            }
-
-            byte[] chartImage = chartToImage(chart, 450, 350);
-            com.itextpdf.layout.element.Image img = new com.itextpdf.layout.element.Image(ImageDataFactory.create(chartImage));
-            img.setWidth(UnitValue.createPercentValue(70));
-            img.setHorizontalAlignment(HorizontalAlignment.CENTER);
-            doc.add(img);
-        } catch (Exception e) {
-            doc.add(new Paragraph("Chart generation failed: " + e.getMessage())
-                    .setFont(regular).setFontSize(10));
-        }
-    }
-
     private void addCategoryDetails(Document doc, List<CategoryScoreDTO> scores, PdfFont bold, PdfFont regular) {
         doc.add(new Paragraph("DETAILED CATEGORY ANALYSIS")
                 .setFont(bold).setFontSize(22).setFontColor(PRIMARY_COLOR)
@@ -362,6 +271,124 @@ public class PdfReportService {
         }
     }
 
+    private void addRiasecSection(Document doc, List<TraitScoreDTO> riasec, PdfFont bold, PdfFont regular) {
+        doc.add(new Paragraph("INTEREST PROFILE (RIASEC / HOLLAND THEORY)")
+                .setFont(bold).setFontSize(22).setFontColor(PRIMARY_COLOR)
+                .setBorderBottom(new SolidBorder(PRIMARY_COLOR, 2)).setPaddingBottom(10));
+        doc.add(new Paragraph("\n"));
+
+        doc.add(new Paragraph("Holland's RIASEC theory groups career interests into six areas. "
+                + "The percentages below show how your interests are distributed across these areas, "
+                + "with your strongest areas listed first.")
+                .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR).setMarginBottom(8));
+
+        String topCode = riasec.stream()
+                .map(t -> {
+                    String c = t.getCode();
+                    return c == null || c.isEmpty() ? "" : c.substring(0, 1);
+                })
+                .reduce("", String::concat);
+        if (!topCode.isEmpty()) {
+            doc.add(new Paragraph("Your Holland Code: " + topCode)
+                    .setFont(bold).setFontSize(14).setFontColor(SECONDARY_COLOR).setMarginBottom(8));
+        }
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{3, 1}))
+                .setWidth(UnitValue.createPercentValue(90));
+        table.addHeaderCell(createHeaderCell("Interest Area", bold));
+        table.addHeaderCell(createHeaderCell("Share", bold));
+        for (TraitScoreDTO t : riasec) {
+            table.addCell(createDataCell(t.getName(), regular));
+            table.addCell(createDataCell(t.getPercentage() + "%", regular));
+        }
+        doc.add(table);
+
+        if (!riasec.isEmpty()) {
+            TraitScoreDTO top = riasec.get(0);
+            doc.add(new Paragraph("Your strongest interest area is " + top.getName()
+                    + ". Explore activities, subjects and career clusters that draw on this interest, "
+                    + "while staying open to your other areas too.")
+                    .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR).setMarginTop(8).setMarginBottom(4));
+        }
+
+        doc.add(new Paragraph("What Each Area Means & How to Grow It")
+                .setFont(bold).setFontSize(15).setFontColor(PRIMARY_COLOR).setMarginTop(12).setMarginBottom(6));
+        doc.add(new Paragraph("Interests are not fixed — the more you practise an area, the stronger it usually "
+                + "becomes. Below is what each area is about, what makes someone strong in it, and simple things "
+                + "you can do to build up the areas where your score is lower.")
+                .setFont(regular).setFontSize(10).setFontColor(DARK_COLOR).setMarginBottom(8));
+
+        for (TraitScoreDTO t : riasec) {
+            String code = t.getCode() == null ? "" : t.getCode().toUpperCase();
+
+            Div block = new Div().setKeepTogether(true).setMarginBottom(10);
+            block.add(new Paragraph(t.getName() + "  \u2014  " + t.getPercentage() + "%")
+                    .setFont(bold).setFontSize(12).setFontColor(SECONDARY_COLOR).setMarginBottom(2));
+            block.add(new Paragraph("What it is: " + riasecMeaning(code))
+                    .setFont(regular).setFontSize(10).setFontColor(DARK_COLOR).setMarginBottom(2));
+            block.add(new Paragraph("What makes someone strong here: " + riasecStrongWhen(code))
+                    .setFont(regular).setFontSize(10).setFontColor(DARK_COLOR).setMarginBottom(2));
+            block.add(new Paragraph("How to improve this area: " + riasecGrowth(code))
+                    .setFont(regular).setFontSize(10).setFontColor(DARK_COLOR)
+                    .setBackgroundColor(LIGHT_BG).setPadding(6));
+            doc.add(block);
+        }
+    }
+
+    private String riasecMeaning(String code) {
+        return switch (code) {
+            case "REALISTIC" -> "Working with your hands, tools, machines, plants or animals — practical, "
+                    + "hands-on 'doer' activities.";
+            case "INVESTIGATIVE" -> "Exploring, questioning and solving problems through observation, science "
+                    + "and analysis — the 'thinker' area.";
+            case "ARTISTIC" -> "Creating and expressing ideas through art, music, writing, design or performance "
+                    + "— the 'creator' area.";
+            case "SOCIAL" -> "Helping, teaching, guiding and caring for others and working closely with people "
+                    + "— the 'helper' area.";
+            case "ENTERPRISING" -> "Leading, persuading, organising people and starting things — the 'persuader' "
+                    + "area.";
+            case "CONVENTIONAL" -> "Organising information, following clear systems, and working carefully with "
+                    + "numbers, records and detail — the 'organiser' area.";
+            default -> "One of the six Holland interest areas.";
+        };
+    }
+
+    private String riasecStrongWhen(String code) {
+        return switch (code) {
+            case "REALISTIC" -> "You enjoy building, fixing or making things, being active, and seeing a real, "
+                    + "physical result from your effort.";
+            case "INVESTIGATIVE" -> "You like asking 'why' and 'how', enjoy maths and science, and prefer to "
+                    + "understand things deeply before acting.";
+            case "ARTISTIC" -> "You have lots of ideas, enjoy imagining and expressing yourself, and like tasks "
+                    + "that have no single 'right' answer.";
+            case "SOCIAL" -> "You feel energised by helping others, are a good listener, and enjoy teamwork, "
+                    + "teaching and encouraging people.";
+            case "ENTERPRISING" -> "You like taking the lead, sharing your opinions confidently, convincing "
+                    + "others and organising group activities.";
+            case "CONVENTIONAL" -> "You like neat, well-ordered work, are careful with details, and feel "
+                    + "comfortable following clear rules and plans.";
+            default -> "You are naturally drawn to this kind of activity.";
+        };
+    }
+
+    private String riasecGrowth(String code) {
+        return switch (code) {
+            case "REALISTIC" -> "Try hands-on hobbies — build models or simple electronics, join a robotics or "
+                    + "craft club, help with repairs at home, or take up gardening, sports or cooking.";
+            case "INVESTIGATIVE" -> "Do small science experiments, join a science/maths club, watch how-things-"
+                    + "work videos, ask questions and research answers, and try puzzles, coding or Olympiad practice.";
+            case "ARTISTIC" -> "Keep a sketch or writing journal, learn an instrument, try photography, drama or "
+                    + "design apps, and take part in art, music or creative-writing activities.";
+            case "SOCIAL" -> "Help classmates who are stuck, volunteer for community or school service, join group "
+                    + "projects, and practise really listening before you respond.";
+            case "ENTERPRISING" -> "Lead a group task, join debate or the student council, plan a small event or "
+                    + "sale, present your ideas to the class, and practise persuading with clear reasons.";
+            case "CONVENTIONAL" -> "Keep a tidy planner and to-do lists, help organise records or data, learn "
+                    + "spreadsheets, and practise finishing tasks accurately and on time.";
+            default -> "Try activities linked to this area and stay open to new experiences.";
+        };
+    }
+
     private void addMbtiSection(Document doc, MbtiResultDTO mbti, PdfFont bold, PdfFont regular) {
         doc.add(new Paragraph("PERSONALITY TYPE (MBTI)")
                 .setFont(bold).setFontSize(22).setFontColor(PRIMARY_COLOR)
@@ -382,20 +409,33 @@ public class PdfReportService {
         }
 
         if (mbti.getDimensions() != null && !mbti.getDimensions().isEmpty()) {
-            doc.add(new Paragraph("Preference Strengths")
+            doc.add(new Paragraph("Preference Breakdown & How to Grow")
                     .setFont(bold).setFontSize(14).setFontColor(PRIMARY_COLOR).setMarginTop(10));
 
-            Table dimTable = new Table(UnitValue.createPercentArray(new float[]{2, 1, 3}))
+            Table dimTable = new Table(UnitValue.createPercentArray(new float[]{2, 3, 4}))
                     .setWidth(UnitValue.createPercentValue(100));
             dimTable.addHeaderCell(createHeaderCell("Dimension", bold));
-            dimTable.addHeaderCell(createHeaderCell("Preference", bold));
-            dimTable.addHeaderCell(createHeaderCell("Strength", bold));
+            dimTable.addHeaderCell(createHeaderCell("Your Split", bold));
+            dimTable.addHeaderCell(createHeaderCell("How You Can Improve", bold));
 
             for (MbtiDimensionScoreDTO dim : mbti.getDimensions()) {
-                dimTable.addCell(createDataCell(dim.getLeftName() + " (" + dim.getLeftLetter() + ") / "
+                int total = dim.getLeftCount() + dim.getRightCount();
+                int leftPct = total > 0 ? (int) Math.round(dim.getLeftCount() * 100.0 / total) : 0;
+                int rightPct = total > 0 ? 100 - leftPct : 0;
+
+                dimTable.addCell(createDataCell(dim.getLeftName() + " (" + dim.getLeftLetter() + ")\nvs\n"
                         + dim.getRightName() + " (" + dim.getRightLetter() + ")", regular));
-                dimTable.addCell(createDataCell(dim.getChosenName() + " (" + dim.getChosenLetter() + ")", regular));
-                dimTable.addCell(createDataCell(dim.getStrengthPercentage() + "%", regular));
+
+                String split = dim.getLeftLetter() + " " + leftPct + "%   |   "
+                        + dim.getRightLetter() + " " + rightPct + "%\n"
+                        + "Preference: " + dim.getChosenName() + " (" + dim.getChosenLetter() + ")";
+                dimTable.addCell(createDataCell(split, regular));
+
+                dimTable.addCell(new Cell()
+                        .add(new Paragraph(improvementTip(dim.getChosenLetter()))
+                                .setFont(regular).setFontSize(9).setFontColor(DARK_COLOR))
+                        .setPadding(6).setBackgroundColor(LIGHT_BG)
+                        .setTextAlignment(TextAlignment.LEFT));
             }
             doc.add(dimTable);
         }
@@ -416,6 +456,31 @@ public class PdfReportService {
             doc.add(new Paragraph(mbti.getGrowthTips())
                     .setFont(regular).setFontSize(11).setFontColor(DARK_COLOR));
         }
+    }
+
+    private String improvementTip(String chosenLetter) {
+        if (chosenLetter == null) {
+            return "Practise balancing this preference with its opposite in everyday situations.";
+        }
+        return switch (chosenLetter) {
+            case "E" -> "You lean Extraverted. To grow, build focus and reflection: spend quiet time planning "
+                    + "before acting, and listen fully before responding.";
+            case "I" -> "You lean Introverted. To grow, stretch your social energy: speak up in groups, share "
+                    + "ideas early, and take part in team activities.";
+            case "S" -> "You lean Sensing. To grow, exercise the bigger picture: ask 'what could this lead to?', "
+                    + "explore new ideas and look for patterns beyond the facts.";
+            case "N" -> "You lean Intuitive. To grow, ground your ideas in detail: check facts, follow steps "
+                    + "carefully and turn big ideas into concrete plans.";
+            case "T" -> "You lean Thinking. To grow, add empathy to logic: consider how decisions affect people "
+                    + "and acknowledge feelings alongside facts.";
+            case "F" -> "You lean Feeling. To grow, add objectivity: weigh pros and cons, use evidence and "
+                    + "practise giving honest, constructive feedback.";
+            case "J" -> "You lean Judging. To grow, build flexibility: stay open to change, try new approaches "
+                    + "and leave room for spontaneity in your plans.";
+            case "P" -> "You lean Perceiving. To grow, build structure: set deadlines, break tasks into steps "
+                    + "and finish what you start before moving on.";
+            default -> "Practise balancing this preference with its opposite in everyday situations.";
+        };
     }
 
     private void addGrade8Sections(Document doc, Grade8ReportDTO report, PdfFont bold, PdfFont regular) {
